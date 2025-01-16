@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" fill="none">
+    <!-- Outer Circle -->
+    <circle cx="100" cy="100" r="95" stroke="#4CAF50" stroke-width="10"/>
+
+    <!-- Checkmark -->
+    <path d="M70 100 L90 120 L130 80" stroke="#4CAF50" stroke-width="10" fill="none" stroke-linecap="round"
+          stroke-linejoin="round"/>
+
+    <!-- Week Grid -->
+    <rect x="50" y="130" width="100" height="40" fill="#E0E0E0" rx="5"/>
+    <line x1="75" y1="130" x2="75" y2="170" stroke="#BDBDBD" stroke-width="3"/>
+    <line x1="100" y1="130" x2="100" y2="170" stroke="#BDBDBD" stroke-width="3"/>
+    <line x1="125" y1="130" x2="125" y2="170" stroke="#BDBDBD" stroke-width="3"/>
+
+    <!-- Text -->
+    <text x="50%" y="190" text-anchor="middle" fill="#4CAF50" font-family="Arial, sans-serif" font-size="18"
+          font-weight="bold">
+        TW
+    </text>
+</svg>
