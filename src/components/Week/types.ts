@@ -1,5 +1,11 @@
 export type WeekDay = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
 
+export type Payment = {
+  day: WeekDay;
+  lunch: boolean;
+  breakfast: boolean;
+};
+
 export interface WeekData {
   balance: {
     was: number;
@@ -11,9 +17,5 @@ export interface WeekData {
   name: string;
   benefit: boolean;
   active: boolean;
-  payments: {
-    day: WeekDay;
-    lunch: boolean;
-    breakfast: boolean;
-  }[];
+  payments: Payment[];
 }

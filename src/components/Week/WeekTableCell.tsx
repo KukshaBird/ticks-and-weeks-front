@@ -7,24 +7,43 @@ export interface WeekTableCellProps {
     benefit: boolean;
     active: boolean;
   };
+  onClick: (payment: { lunch: boolean; breakfast: boolean }) => void;
 }
 
-export default function WeekTableCell({ data }: WeekTableCellProps) {
+export default function WeekTableCell({ data, onClick }: WeekTableCellProps) {
   if (!data.active) {
     return <td className="mx-2 w-full h-full"></td>;
   }
+
+  const handleClick = (key: 'lunch' | 'breakfast'): void => {
+    if (key === 'breakfast') {
+      onClick({
+        lunch: data.lunch,
+        breakfast: !data.breakfast,
+      });
+    } else if (key === 'lunch') {
+      onClick({
+        breakfast: data.breakfast,
+        lunch: !data.lunch,
+      });
+    }
+  };
 
   const breakfastClass = `w-full my-1 min-h-6 py-1 ${data.breakfast ? 'btn-primary' : 'btn-secondary'} block`;
 
   return (
     <td className="mx-2">
       <Button
+        onClick={() => handleClick('breakfast')}
         disabled={data.benefit}
         className={data.benefit ? `${breakfastClass} bg-gray-500 hover:bg-gray-500` : breakfastClass}
       >
         Breakfast
       </Button>
-      <Button className={`w-full my-1 min-h-6 py-1 ${data.lunch ? 'btn-primary' : 'btn-secondary'} block`}>
+      <Button
+        onClick={() => handleClick('lunch')}
+        className={`w-full my-1 min-h-6 py-1 ${data.lunch ? 'btn-primary' : 'btn-secondary'} block`}
+      >
         Lunch
       </Button>
     </td>

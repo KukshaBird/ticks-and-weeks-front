@@ -3,6 +3,7 @@ import { WeekData, WeekDay } from './types.ts';
 import DUMP_WEEK_DATA from './dumpData.ts';
 import { getWeekDay } from './util.ts';
 import WeekTableCell from './WeekTableCell.tsx';
+import React from 'react';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const FULL_COLUMNS = ['#', 'Name', 'Was', 'Added', ...DAYS, 'Spent', 'Left'];
@@ -12,7 +13,34 @@ const INIT_DAY_DATA = {
 };
 
 export function Week() {
-  const data: WeekData[] = [...DUMP_WEEK_DATA];
+  const dumpData: WeekData[] = [...DUMP_WEEK_DATA];
+
+  const [data, setData] = React.useState<WeekData[]>([...dumpData]);
+
+  const handleToggle = (
+    { id, dayName }: { id: string; dayName: string },
+    payment: {
+      lunch: boolean;
+      breakfast: boolean;
+    }
+  ) => {
+    const newData = [...data];
+
+    const weekDataIndex = newData.findIndex((user) => user.id === id);
+
+    if (weekDataIndex === -1) return;
+
+    const payments = newData[weekDataIndex].payments;
+    const paymentIndex = payments.findIndex((day) => day.day === dayName);
+
+    if (paymentIndex !== -1) {
+      payments[paymentIndex] = { ...payments[paymentIndex], ...payment };
+    } else {
+      payments.push({ day: dayName as WeekDay, ...payment });
+    }
+
+    setData(newData);
+  };
 
   const rows = data.map((weekData, index) => {
     const { startData, days, endData } = {
@@ -33,11 +61,16 @@ export function Week() {
             }))
           ) || {
             ...INIT_DAY_DATA,
+            day: dayName,
             benefit: weekData.benefit,
             active: weekData.active,
           }
       ).map((day) => {
-        return day ? <WeekTableCell data={day} /> : <td className="mx-2 w-full h-full "></td>;
+        return day ? (
+          <WeekTableCell data={day} onClick={handleToggle.bind(null, { id: weekData.id, dayName: day.day })} />
+        ) : (
+          <td className="mx-2 w-full h-full "></td>
+        );
       }),
       endData: {
         spent: weekData.balance.removed, // TODO: Calculate here from days;
