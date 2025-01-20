@@ -15,6 +15,10 @@
 
 @layer components {
     .btn-primary {
-        @apply py-2 px-5 bg-green-500 text-white font-semibold rounded-full shadow-md hover:bg-green-700 focus:outline-none focus:ring focus:ring-gray-400 focus:ring-opacity-75;
+        @apply py-2 px-5 bg-[#FBBF24] text-[#0F766E] hover:text-[#0D6058] font-semibold rounded-full shadow-md hover:bg-[#F59E0B] focus:outline-none focus:ring focus:ring-gray-400 focus:ring-opacity-75;
+    }
+
+    .btn-secondary {
+        @apply py-2 px-5 bg-[#F97316] text-[#1E3A8A] font-semibold rounded-full shadow-md hover:bg-[#EA580C] hover:text-[#1A326F] focus:outline-none focus:ring focus:ring-gray-400 focus:ring-opacity-75;
     }
 }
