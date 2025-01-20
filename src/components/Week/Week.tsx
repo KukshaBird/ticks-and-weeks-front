@@ -65,13 +65,9 @@ export function Week() {
             benefit: weekData.benefit,
             active: weekData.active,
           }
-      ).map((day) => {
-        return day ? (
-          <WeekTableCell data={day} onClick={handleToggle.bind(null, { id: weekData.id, dayName: day.day })} />
-        ) : (
-          <td className="mx-2 w-full h-full "></td>
-        );
-      }),
+      ).map((day) => (
+        <WeekTableCell data={day} onClick={handleToggle.bind(null, { id: weekData.id, dayName: day.day })} />
+      )),
       endData: {
         spent: weekData.balance.removed, // TODO: Calculate here from days;
         left: weekData.balance.now,
