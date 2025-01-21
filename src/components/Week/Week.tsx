@@ -1,9 +1,13 @@
+import React, { useCallback, useEffect } from 'react';
 import WeekTable from './WeekTable.tsx';
-import { WeekData, WeekDay } from './types.ts';
-import DUMP_WEEK_DATA from './dumpData.ts';
-import { getWeekDay } from './util.ts';
 import WeekTableCell from './WeekTableCell.tsx';
-import React from 'react';
+import { getWeekDay } from './util.ts';
+
+import { WeekDay } from './types.ts';
+import User from '../../models/User.ts';
+import UserManager from '../../managers/UserManager.ts';
+import Button from '../UI/Button.tsx';
+import { BaseUser } from '../../models/types.ts';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const FULL_COLUMNS = ['#', 'Name', 'Was', 'Added', ...DAYS, 'Spent', 'Left'];
@@ -13,9 +17,7 @@ const INIT_DAY_DATA = {
 };
 
 export function Week() {
-  const dumpData: WeekData[] = [...DUMP_WEEK_DATA];
-
-  const [data, setData] = React.useState<WeekData[]>([...dumpData]);
+  const [data, setData] = React.useState<User[]>([]);
 
   const handleToggle = (
     { id, dayName }: { id: string; dayName: string },
@@ -41,6 +43,17 @@ export function Week() {
 
     setData(newData);
   };
+
+  const fetchUsersCb = useCallback(async () => UserManager.getAll(), []);
+
+  useEffect(() => {
+    async function fetchUsers(): Promise<void> {
+      const users = await fetchUsersCb();
+      setData(users);
+    }
+
+    fetchUsers().then();
+  }, [fetchUsersCb]);
 
   const rows = data.map((weekData, index) => {
     const { startData, days, endData } = {
@@ -69,17 +82,43 @@ export function Week() {
         <WeekTableCell data={day} onClick={handleToggle.bind(null, { id: weekData.id, dayName: day.day })} />
       )),
       endData: {
-        spent: weekData.balance.removed, // TODO: Calculate here from days;
-        left: weekData.balance.now,
+        spent: weekData.balanceSpent(),
+        left: weekData.balanceLeft(),
       },
     };
 
     return [...Object.values(startData), ...days, ...Object.values(endData)];
   });
 
+  const handleClickCrate = () => {
+    const initUser: BaseUser = {
+      name: 'test name',
+      active: true,
+      benefit: false,
+      payments: [],
+      balance: {
+        was: 0,
+        added: 0,
+        removed: 0,
+        now: 0,
+      },
+    };
+
+    UserManager.createUser(initUser).then(() => {});
+  };
+
+  useEffect(() => {
+    return () => {
+      if (data.length) {
+        UserManager.saveAll(data).then(() => {});
+      }
+    };
+  }, [data]);
+
   return (
     <>
       <h3 className="h-full py-2 flex justify-center w-auto text-stone-600 text-xl font-bold">Week</h3>
+      <Button onClick={handleClickCrate}>Create User</Button>
       <div className="mb-2.5 min-h-96 p-8">
         <WeekTable rows={rows} columns={FULL_COLUMNS} />
       </div>
