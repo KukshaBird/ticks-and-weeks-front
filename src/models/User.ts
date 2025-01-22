@@ -14,7 +14,7 @@ class User implements IUser {
   ) {}
 
   public static fromJSON(data: IUser): User {
-    return new User(data.id, data.name, (data.benefit = false), data.active, data.payments, data.balance);
+    return new User(data.id, data.name, Boolean(data.benefit), data.active, data.payments, data.balance);
   }
 
   public balanceLeft(): number {

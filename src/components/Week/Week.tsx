@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect } from 'react';
 import WeekTable from './WeekTable.tsx';
 import WeekTableCell from './WeekTableCell.tsx';
+import { CreateUser } from '../User/CreateUser.tsx';
+
+import User from '../../models/User.ts';
 import { getWeekDay } from './util.ts';
 
-import { WeekDay } from './types.ts';
-import User from '../../models/User.ts';
 import UserManager from '../../managers/UserManager.ts';
-import Button from '../UI/Button.tsx';
-import { BaseUser } from '../../models/types.ts';
+import { WeekDay } from './types.ts';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const FULL_COLUMNS = ['#', 'Name', 'Was', 'Added', ...DAYS, 'Spent', 'Left'];
@@ -90,23 +90,6 @@ export function Week() {
     return [...Object.values(startData), ...days, ...Object.values(endData)];
   });
 
-  const handleClickCrate = () => {
-    const initUser: BaseUser = {
-      name: 'test name',
-      active: true,
-      benefit: false,
-      payments: [],
-      balance: {
-        was: 0,
-        added: 0,
-        removed: 0,
-        now: 0,
-      },
-    };
-
-    UserManager.createUser(initUser).then(() => {});
-  };
-
   useEffect(() => {
     return () => {
       if (data.length) {
@@ -118,7 +101,7 @@ export function Week() {
   return (
     <>
       <h3 className="h-full py-2 flex justify-center w-auto text-stone-600 text-xl font-bold">Week</h3>
-      <Button onClick={handleClickCrate}>Create User</Button>
+      <CreateUser />
       <div className="mb-2.5 min-h-96 p-8">
         <WeekTable rows={rows} columns={FULL_COLUMNS} />
       </div>

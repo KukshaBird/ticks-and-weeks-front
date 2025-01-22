@@ -21,6 +21,12 @@ export interface BaseUser {
   payments: Payment[];
 }
 
+export interface CreateUser {
+  name: string;
+  benefit?: boolean;
+  startBalance?: number;
+}
+
 export interface IUser extends BaseUser {
   id: string;
 }
