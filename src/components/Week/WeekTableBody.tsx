@@ -9,8 +9,8 @@ interface WeekTableBodyProps {
 export default function WeekTableBody({ rows }: WeekTableBodyProps) {
   return (
     <TableBody>
-      {rows.map((row) => (
-        <WeekTableRow row={row} />
+      {rows.map((row, index) => (
+        <WeekTableRow key={`tr-${index}`} row={row} />
       ))}
     </TableBody>
   );

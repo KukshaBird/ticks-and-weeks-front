@@ -9,8 +9,8 @@ export default function WeekTableRow({ row }: WeekTableRowProps) {
   return (
     <Row>
       {row.map(
-        (cell): React.ReactElement => (
-          <Cell cell={cell} />
+        (cell, index): React.ReactElement => (
+          <Cell key={`cell-${index}`} cell={cell} />
         )
       )}
     </Row>
