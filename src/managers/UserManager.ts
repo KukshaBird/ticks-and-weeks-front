@@ -24,6 +24,10 @@ class UserManager implements IUserManager {
     await this.userService.create(userData);
   }
 
+  public async deleteUser(userId: string): Promise<void> {
+    return await this.userService.delete(userId);
+  }
+
   public createUserModels(users: IUser[]): User[] {
     return users.map((user: IUser) => this.createUserModel(user));
   }

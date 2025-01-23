@@ -10,13 +10,11 @@ export interface MayCreateService<T> {
   create(data: T): Promise<void>;
 }
 
-// abstract class BaseService<T> {
-//   protected constructor(protected service: IService<T>) {
-//     this.service = service;
-//   }
-// }
+export interface MayDeleteService {
+  delete(id: string): Promise<void>;
+}
 
-export interface IUserService extends IService<IUser>, MayCreateService<BaseUser> {}
+export interface IUserService extends IService<IUser>, MayCreateService<BaseUser>, MayDeleteService {}
 
 class LocalStorageUserService implements IService<IUser>, IUserService {
   public fetchAll(): Promise<IUser[]> {
@@ -38,6 +36,14 @@ class LocalStorageUserService implements IService<IUser>, IUserService {
     const shapedUser = this.shapeUser(data);
 
     return await this.saveAll([...fetchedUsers, shapedUser]);
+  }
+
+  public async delete(id: string): Promise<void> {
+    const fetchedUsers: IUser[] = JSON.parse(localStorage.getItem('users') || '[]');
+    if (fetchedUsers != null) {
+      const filteredUsers = fetchedUsers.filter((user) => user.id !== id);
+      await this.saveAll(filteredUsers);
+    }
   }
 
   /**
@@ -70,6 +76,10 @@ export class UserService {
 
   public async create(data: BaseUser): Promise<void> {
     await this.service.create(data);
+  }
+
+  public async delete(id: string): Promise<void> {
+    await this.service.delete(id);
   }
 }
 
