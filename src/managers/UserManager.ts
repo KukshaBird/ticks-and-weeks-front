@@ -1,6 +1,6 @@
 import User from '../models/User.ts';
 import UserService, { IUserService } from '../services/user.service.ts';
-import { BaseUser, IUser } from '../models/types.ts';
+import { BaseUser, EditUser, IUser } from '../models/types.ts';
 
 interface IUserManager {
   getAll(): Promise<User[]>;
@@ -26,6 +26,10 @@ class UserManager implements IUserManager {
 
   public async deleteUser(userId: string): Promise<void> {
     return await this.userService.delete(userId);
+  }
+
+  public async editUser(data: EditUser): Promise<void> {
+    await this.userService.edit(data);
   }
 
   public createUserModels(users: IUser[]): User[] {

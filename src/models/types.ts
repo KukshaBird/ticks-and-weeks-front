@@ -30,3 +30,11 @@ export interface CreateUser {
 export interface IUser extends BaseUser {
   id: string;
 }
+
+export interface EditUser {
+  id: string;
+  name?: string;
+  benefit?: boolean;
+  active?: boolean;
+  balance?: Omit<Balance, 'now' | 'removed' | 'added'>;
+}

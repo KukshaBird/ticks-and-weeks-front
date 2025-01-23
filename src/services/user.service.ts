@@ -1,9 +1,13 @@
-import { BaseUser, IUser } from '../models/types.ts';
+import { BaseUser, EditUser, IUser } from '../models/types.ts';
 
 export interface IService<T> {
   fetchAll(): Promise<T[]>;
 
   saveAll(data: T[]): Promise<void>;
+}
+
+export interface MayReadService<T> {
+  fetchAll(): Promise<T[]>;
 }
 
 export interface MayCreateService<T> {
@@ -14,7 +18,15 @@ export interface MayDeleteService {
   delete(id: string): Promise<void>;
 }
 
-export interface IUserService extends IService<IUser>, MayCreateService<BaseUser>, MayDeleteService {}
+export interface MayEditService<T> {
+  edit(data: T): Promise<void>;
+}
+
+export interface IUserService
+  extends IService<IUser>,
+    MayCreateService<BaseUser>,
+    MayDeleteService,
+    MayEditService<EditUser> {}
 
 class LocalStorageUserService implements IService<IUser>, IUserService {
   public fetchAll(): Promise<IUser[]> {
@@ -43,6 +55,28 @@ class LocalStorageUserService implements IService<IUser>, IUserService {
     if (fetchedUsers != null) {
       const filteredUsers = fetchedUsers.filter((user) => user.id !== id);
       await this.saveAll(filteredUsers);
+    }
+  }
+
+  public async edit(data: EditUser): Promise<void> {
+    const fetchedUsers: IUser[] = JSON.parse(localStorage.getItem('users') || '[]');
+    const userIndex = fetchedUsers.findIndex((user) => user.id === data.id);
+    if (userIndex != -1) {
+      const oldUser = { ...fetchedUsers[userIndex] };
+      fetchedUsers.splice(userIndex, 1, {
+        ...oldUser,
+        name: data.name || oldUser.name,
+        active: data.active ?? oldUser.active,
+        benefit: data.benefit ?? oldUser.benefit,
+        balance: data.balance
+          ? {
+              ...oldUser.balance,
+              was: data.balance.was,
+            }
+          : oldUser.balance,
+      });
+
+      await this.saveAll(fetchedUsers);
     }
   }
 
@@ -80,6 +114,10 @@ export class UserService {
 
   public async delete(id: string): Promise<void> {
     await this.service.delete(id);
+  }
+
+  public async edit(data: EditUser): Promise<void> {
+    await this.service.edit(data);
   }
 }
 
