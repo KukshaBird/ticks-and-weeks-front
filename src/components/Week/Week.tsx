@@ -8,9 +8,10 @@ import { getWeekDay } from './util.ts';
 
 import UserManager from '../../managers/UserManager.ts';
 import { WeekDay } from './types.ts';
+import WeekTableDeleteCell from './WeekTableDeleteCell.tsx';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const FULL_COLUMNS = ['#', 'Name', 'Was', 'Added', ...DAYS, 'Spent', 'Left'];
+const FULL_COLUMNS = ['Delete', '#', 'Name', 'Was', 'Added', ...DAYS, 'Spent', 'Left'];
 const INIT_DAY_DATA = {
   lunch: false,
   breakfast: false,
@@ -45,6 +46,7 @@ export function Week() {
   };
 
   const fetchUsersCb = useCallback(async () => UserManager.getAll(), []);
+  const saveUsersCb = useCallback(async (users: User[]) => UserManager.saveAll(users), []);
 
   useEffect(() => {
     async function fetchUsers(): Promise<void> {
@@ -55,9 +57,29 @@ export function Week() {
     fetchUsers().then();
   }, [fetchUsersCb]);
 
+  useEffect(() => {
+    if (data.length) {
+      async function saveUsers(users: User[]) {
+        await saveUsersCb(users);
+      }
+
+      saveUsers(data).then();
+    }
+  }, [data, saveUsersCb]);
+
+  const handleDeleteUser = (id: string) => {
+    UserManager.deleteUser(id).then(() => {
+      setData((prevData) => {
+        const newData = [...prevData];
+        return newData.filter((user) => user.id !== id);
+      });
+    });
+  };
+
   const rows = data.map((weekData, index) => {
     const { startData, days, endData } = {
       startData: {
+        deleteButton: <WeekTableDeleteCell id={weekData.id} onDelete={handleDeleteUser} />,
         order: index + 1,
         name: weekData.name,
         was: weekData.balance.was,
@@ -89,14 +111,6 @@ export function Week() {
 
     return [...Object.values(startData), ...days, ...Object.values(endData)];
   });
-
-  useEffect(() => {
-    return () => {
-      if (data.length) {
-        UserManager.saveAll(data).then(() => {});
-      }
-    };
-  }, [data]);
 
   return (
     <>
