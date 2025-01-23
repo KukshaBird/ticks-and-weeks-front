@@ -137,7 +137,7 @@ export function Week() {
     <>
       <h3 className="h-full py-2 flex justify-center w-auto text-stone-600 text-xl font-bold">Week</h3>
       <CreateUser onSubmit={() => setReRender((prevProps) => !prevProps)} />
-      <DishList dishes={dishes} />
+      <DishList dishes={dishes} reRender={() => setReRender((prevProps) => !prevProps)} />
       <div className="mb-2.5 min-h-96 p-8">
         <WeekTable rows={rows} columns={FULL_COLUMNS} />
       </div>
