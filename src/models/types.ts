@@ -38,3 +38,20 @@ export interface EditUser {
   active?: boolean;
   balance?: Omit<Balance, 'now' | 'removed' | 'added'>;
 }
+
+export interface BaseDish {
+  name: string;
+  price: number;
+}
+
+export interface IDish extends BaseDish {
+  id: string;
+}
+
+export interface IEditDish extends Partial<IDish> {
+  id: string;
+}
+
+export interface IDeleteDish extends Pick<IDish, 'id'> {}
+
+export interface ICreateDish extends Omit<IDish, 'id'> {}
