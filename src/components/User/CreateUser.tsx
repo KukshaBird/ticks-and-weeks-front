@@ -6,7 +6,11 @@ import { Modal, ModalDisplayHandle } from '../UI/Modal.tsx';
 import UserManager from '../../managers/UserManager.ts';
 import { BaseUser, CreateUser as CreateUserProps } from '../../models/types.ts';
 
-export function CreateUser(): ReactElement {
+interface Props {
+  onSubmit: () => void;
+}
+
+export function CreateUser({ onSubmit }: Props): ReactElement {
   const modal = useRef<ModalDisplayHandle>(null);
 
   const handleClickCrate = (userData: CreateUserProps) => {
@@ -22,8 +26,9 @@ export function CreateUser(): ReactElement {
         added: 0,
       },
     };
-    console.log(baseUser);
-    UserManager.createUser(baseUser).then(() => {});
+    UserManager.createUser(baseUser).then(() => {
+      onSubmit();
+    });
   };
 
   const handleSubmit = (userData: CreateUserProps) => {

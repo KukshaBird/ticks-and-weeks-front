@@ -8,7 +8,7 @@ interface FormProps {
 }
 
 const INIT_DATA: CreateUser = {
-  benefit: false,
+  benefit: true,
   name: '',
   startBalance: 0,
 };
@@ -31,11 +31,14 @@ export function UserForm({ onClose, onSubmit }: FormProps) {
       startBalance: Number.parseInt(fsData.startBalance) || undefined,
       benefit: fsData.benefit === 'on',
     });
+
+    event.currentTarget.reset();
   };
 
   const handleClose = () => {
     onClose();
   };
+
   return (
     <form onSubmit={handleSubmit} className={'max-w-md mx-auto bg-sky-100 pb-4'}>
       <h2 className={'text-xl font-bold text-center accent-gray-700 p-4'}>Add User</h2>
@@ -45,7 +48,7 @@ export function UserForm({ onClose, onSubmit }: FormProps) {
         <Input label={'Balance'} name={'startBalance'} type="number" defaultValue={INIT_DATA.startBalance} />
       </div>
       <div className="flex justify-end space-x-4 mt-4 mx-4">
-        <button type={'button'} className="btn-secondary" onClick={handleClose}>
+        <button type={'reset'} className="btn-secondary" onClick={handleClose}>
           Cancel
         </button>
         <button type={'submit'} className="btn-primary" onClick={handleClose}>

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import WeekTable from './WeekTable.tsx';
 import WeekTableCell from './WeekTableCell.tsx';
 import { CreateUser } from '../User/CreateUser.tsx';
@@ -19,6 +19,7 @@ const INIT_DAY_DATA = {
 
 export function Week() {
   const [data, setData] = React.useState<User[]>([]);
+  const [reRender, setReRender] = useState(false);
 
   const handleToggle = (
     { id, dayName }: { id: string; dayName: string },
@@ -55,7 +56,7 @@ export function Week() {
     }
 
     fetchUsers().then();
-  }, [fetchUsersCb]);
+  }, [fetchUsersCb, reRender]);
 
   useEffect(() => {
     if (data.length) {
@@ -115,7 +116,7 @@ export function Week() {
   return (
     <>
       <h3 className="h-full py-2 flex justify-center w-auto text-stone-600 text-xl font-bold">Week</h3>
-      <CreateUser />
+      <CreateUser onSubmit={() => setReRender((prevProps) => !prevProps)} />
       <div className="mb-2.5 min-h-96 p-8">
         <WeekTable rows={rows} columns={FULL_COLUMNS} />
       </div>
