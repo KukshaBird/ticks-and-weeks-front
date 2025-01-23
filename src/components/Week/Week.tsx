@@ -10,6 +10,9 @@ import UserManager from '../../managers/UserManager.ts';
 import { WeekDay } from './types.ts';
 import WeekTableDeleteCell from './WeekTableDeleteCell.tsx';
 import { EditUser } from '../User/EditUser.tsx';
+import DishList from '../Dish/DishList.tsx';
+import Dish from '../../models/Dish.ts';
+import DishManager from '../../managers/DishManager.ts';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const FULL_COLUMNS = ['Delete', 'Edit', '#', 'Name', 'Was', 'Added', ...DAYS, 'Spent', 'Left'];
@@ -20,6 +23,7 @@ const INIT_DAY_DATA = {
 
 export function Week() {
   const [data, setData] = React.useState<User[]>([]);
+  const [dishes, setDishes] = React.useState<Dish[]>([]);
   const [reRender, setReRender] = useState(false);
 
   const handleToggle = (
@@ -48,11 +52,21 @@ export function Week() {
   };
 
   const fetchUsersCb = useCallback(async () => UserManager.getAll(), []);
+  const fetchDishesCb = useCallback(async () => DishManager.getAll(), []);
   const saveUsersCb = useCallback(async (users: User[]) => UserManager.saveAll(users), []);
 
   const handleEditSubmit = () => {
     setReRender(!reRender);
   };
+
+  useEffect(() => {
+    async function fetchDishes(): Promise<void> {
+      const dishes = await fetchDishesCb();
+      setDishes(dishes);
+    }
+
+    fetchDishes().then();
+  }, [fetchDishesCb]);
 
   useEffect(() => {
     async function fetchUsers(): Promise<void> {
@@ -123,6 +137,7 @@ export function Week() {
     <>
       <h3 className="h-full py-2 flex justify-center w-auto text-stone-600 text-xl font-bold">Week</h3>
       <CreateUser onSubmit={() => setReRender((prevProps) => !prevProps)} />
+      <DishList dishes={dishes} />
       <div className="mb-2.5 min-h-96 p-8">
         <WeekTable rows={rows} columns={FULL_COLUMNS} />
       </div>

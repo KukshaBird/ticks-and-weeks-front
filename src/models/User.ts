@@ -1,7 +1,7 @@
 import { Balance, IUser, Payment } from './types.ts';
 
-const LUNCH = 75;
-const BREAKFAST = 95;
+const LUNCH = 95;
+const BREAKFAST = 75;
 
 class User implements IUser {
   constructor(
