@@ -14,6 +14,7 @@ const INIT_DATA: CreateUser = {
   name: '',
   benefit: true,
   startBalance: 0,
+  addedBalance: 0,
 };
 
 export function UserForm({ onClose, onSubmit, defaults }: FormProps) {
@@ -21,6 +22,7 @@ export function UserForm({ onClose, onSubmit, defaults }: FormProps) {
     name: defaults?.name || INIT_DATA.name,
     benefit: (defaults && defaults.benefit) ?? INIT_DATA.benefit,
     startBalance: defaults ? defaults.balance.was : INIT_DATA.startBalance,
+    addedBalance: defaults ? defaults.balance.added : INIT_DATA.addedBalance,
   };
 
   const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
@@ -39,6 +41,7 @@ export function UserForm({ onClose, onSubmit, defaults }: FormProps) {
       name: fsData.name || '',
       benefit: fsData.benefit === 'on',
       startBalance: Number.parseInt(fsData.startBalance) || undefined,
+      addedBalance: Number.parseInt(fsData.addedBalance) || undefined,
     });
 
     event.currentTarget.reset();
@@ -53,7 +56,8 @@ export function UserForm({ onClose, onSubmit, defaults }: FormProps) {
       <div>
         <Input label={'User Name'} name={'name'} defaultValue={defaultData.name} />
         <Input label={'Free Lunch'} name={'benefit'} type="checkbox" defaultChecked={defaultData.benefit} />
-        <Input label={'Balance'} name={'startBalance'} type="number" defaultValue={defaultData.startBalance} />
+        <Input label={'Start Balance'} name={'startBalance'} type="number" defaultValue={defaultData.startBalance} />
+        <Input label={'Added Balance'} name={'addedBalance'} type="number" defaultValue={defaultData.addedBalance} />
       </div>
       <div className="flex justify-end space-x-4 mt-4 mx-4">
         <button type={'reset'} className="btn-secondary" onClick={handleClose}>

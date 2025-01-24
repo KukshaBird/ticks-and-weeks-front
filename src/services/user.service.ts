@@ -51,6 +51,7 @@ class LocalStorageUserService implements IService<IUser>, IUserService {
           ? {
               ...oldUser.balance,
               was: data.balance.was,
+              added: data.balance.added,
             }
           : oldUser.balance,
       });

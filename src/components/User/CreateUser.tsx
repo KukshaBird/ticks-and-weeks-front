@@ -23,7 +23,7 @@ export function CreateUser({ onSubmit }: Props): ReactElement {
         was: userData.startBalance || 0,
         now: 0,
         removed: 0,
-        added: 0,
+        added: userData.addedBalance || 0,
       },
     };
     UserManager.createUser(baseUser).then(() => {

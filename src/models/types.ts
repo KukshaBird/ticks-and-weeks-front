@@ -25,6 +25,7 @@ export interface CreateUser {
   name: string;
   benefit?: boolean;
   startBalance?: number;
+  addedBalance?: number;
 }
 
 export interface IUser extends BaseUser {
@@ -36,7 +37,7 @@ export interface EditUser {
   name?: string;
   benefit?: boolean;
   active?: boolean;
-  balance?: Omit<Balance, 'now' | 'removed' | 'added'>;
+  balance?: Omit<Balance, 'now' | 'removed'>;
 }
 
 export interface BaseDish {

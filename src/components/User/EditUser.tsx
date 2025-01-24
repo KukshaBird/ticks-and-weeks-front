@@ -21,11 +21,12 @@ export function EditUser({ onSubmit, user }: Props): ReactElement {
       name: userData.name,
       balance: {
         ...user.balance,
-        was: userData.startBalance !== undefined ? userData.startBalance : user.balance.was,
+        was: userData.startBalance ?? user.balance.was,
+        added: userData.addedBalance ?? user.balance.added,
       },
       benefit: Boolean(userData.benefit),
     };
-    
+
     UserManager.editUser(prepared).then(() => {
       onSubmit();
     });

@@ -19,7 +19,7 @@ class User implements IUser {
   }
 
   public balanceLeft(): number {
-    return this.balance.was - this.balanceSpent();
+    return this.balance.was + this.balance.added - this.balanceSpent();
   }
 
   public balanceSpent(): number {
