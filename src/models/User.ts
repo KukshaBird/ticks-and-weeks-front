@@ -1,5 +1,6 @@
 import { Balance, IUser, Payment } from './types.ts';
 
+//TODO: Use Dish models;
 const LUNCH = 95;
 const BREAKFAST = 75;
 
