@@ -7,9 +7,10 @@ interface DishProps {
 
 export default function DishComponent({ dish }: DishProps): ReactElement {
   return (
-    <div className={'flex justify-start p1 m2 border-2 border-b-amber-900'}>
+    <div>
       <p>
-        {dish.name.toUpperCase()}: {dish.price}
+        <span className={'tracking-wide'}>{dish.name.toUpperCase()}</span>:{' '}
+        <span className={'font-bold'}>{dish.price}</span>
       </p>
     </div>
   );

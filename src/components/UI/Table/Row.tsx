@@ -5,5 +5,5 @@ interface RowProps extends ComponentProps<'tr'> {
 }
 
 export function Row({ children }: RowProps): React.JSX.Element {
-  return <tr className="text-center">{children}</tr>;
+  return <tr className="text-center overflow-hidden">{children}</tr>;
 }

@@ -9,7 +9,7 @@ export function Cell({ cell, head = false }: CellProps): React.JSX.Element {
   const CellTag = head ? 'th' : 'td';
 
   if (typeof cell === 'string' || typeof cell === 'number') {
-    return <CellTag className="mx-2 w-full h-full text-center">{cell}</CellTag>;
+    return <CellTag className="mx-2 w-full h-full text-center truncate">{cell}</CellTag>;
   } else if (React.isValidElement(cell)) {
     return cell;
   } else {

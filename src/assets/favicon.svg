@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" fill="none">
     <!-- Outer Circle -->
-    <circle cx="100" cy="100" r="95" stroke="#4CAF50" stroke-width="10"/>
+    <circle cx="100" cy="100" r="95" stroke="#14b8a6" stroke-width="10"/>
 
     <!-- Checkmark -->
-    <path d="M70 100 L90 120 L130 80" stroke="#4CAF50" stroke-width="10" fill="none" stroke-linecap="round"
+    <path d="M70 100 L90 120 L130 80" stroke="#14b8a6" stroke-width="10" fill="none" stroke-linecap="round"
           stroke-linejoin="round"/>
 
     <!-- Week Grid -->
@@ -13,7 +13,7 @@
     <line x1="125" y1="130" x2="125" y2="170" stroke="#BDBDBD" stroke-width="3"/>
 
     <!-- Text -->
-    <text x="50%" y="190" text-anchor="middle" fill="#4CAF50" font-family="Arial, sans-serif" font-size="18"
+    <text x="50%" y="190" text-anchor="middle" fill="#14b8a6" font-family="Arial, sans-serif" font-size="18"
           font-weight="bold">
         TW
     </text>

@@ -51,8 +51,10 @@ export function Week() {
   return (
     <>
       <h3 className="h-full py-2 flex justify-center w-auto text-stone-600 text-xl font-bold">Week</h3>
-      <CreateUser onSubmit={() => setReRender((prevProps) => !prevProps)} />
-      <DishList dishes={dishes} reRender={() => setReRender((prevProps) => !prevProps)} />
+      <div className={'flex items-center justify-end w-full h-6'}>
+        <DishList dishes={dishes} reRender={() => setReRender((prevProps) => !prevProps)} />
+        <CreateUser onSubmit={() => setReRender((prevProps) => !prevProps)} />
+      </div>
       <div className="mb-2.5 min-h-96 p-8">
         <WeekTable data={data} setNewData={setData} reRender={reRenderDrill} />
       </div>

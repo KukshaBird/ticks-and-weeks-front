@@ -49,7 +49,14 @@ export function CreateUser({ onSubmit }: Props): ReactElement {
 
   return (
     <>
-      <Button onClick={handleOpenModal}>Create User</Button>
+      <Button
+        onClick={handleOpenModal}
+        className={
+          'mr-4 w-8 h-8 content-center bg-gradient-to-b from-gray-700 to-gray-800 text-white font-semibold rounded-full shadow-md hover:bg-gradient-to-b hover:from-gray-800 hover:to-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-300'
+        }
+      >
+        <span className="fill-teal-500">+</span>
+      </Button>
       <Modal onClose={handleCloseModel} ref={modal}>
         <UserForm onClose={handleCloseModel} onSubmit={handleSubmit} />
       </Modal>
