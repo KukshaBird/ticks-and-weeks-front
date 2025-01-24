@@ -1,18 +1,21 @@
 import WeekTableHead from './WeekTableHead.tsx';
 import WeekTableBody from './WeekTableBody.tsx';
 import { Table } from '../UI/Table';
-import { JSX } from 'react';
+import User from '../../models/User.ts';
+import { FULL_COLUMNS } from './constants.ts';
+import { SetUserState } from './types.ts';
 
 interface WeekTableProps {
-  rows: (string | number | JSX.Element)[][];
-  columns: string[];
+  data: User[];
+  reRender: () => void;
+  setNewData: SetUserState;
 }
 
-export default function WeekTable({ rows, columns }: WeekTableProps) {
+export default function WeekTable({ data, reRender, setNewData }: WeekTableProps) {
   return (
     <Table>
-      <WeekTableHead columns={columns} />
-      <WeekTableBody rows={rows} />
+      <WeekTableHead columns={FULL_COLUMNS} />
+      <WeekTableBody data={data} reRender={reRender} setNewData={setNewData} />
     </Table>
   );
 }
