@@ -21,4 +21,17 @@
     .btn-secondary {
         @apply py-2 px-5 bg-[#F97316] text-[#1E3A8A] font-semibold rounded-full shadow-md hover:bg-[#EA580C] hover:text-[#1A326F] focus:outline-none focus:ring focus:ring-gray-400 focus:ring-opacity-75;
     }
+
+    .btn-passed-dish {
+        @apply py-2 px-6 bg-gray-200 text-gray-500 font-medium rounded-full shadow-sm hover:bg-gray-300 hover:text-gray-600 focus:outline-none transition-all ease-in-out duration-300;
+    }
+
+    .btn-checked-dish {
+        @apply py-2 px-6 bg-green-500 text-white font-semibold rounded-full shadow-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transition-all ease-in-out duration-300;
+    }
+
+    .btn-disabled-dish {
+        @apply py-2 px-6 bg-gray-200 text-gray-400 font-medium rounded-full shadow-none cursor-not-allowed opacity-50 focus:outline-none;
+    }
+
 }

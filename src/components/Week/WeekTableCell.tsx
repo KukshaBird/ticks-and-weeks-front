@@ -29,20 +29,20 @@ export default function WeekTableCell({ data, onClick }: WeekTableCellProps) {
     }
   };
 
-  const breakfastClass = `w-full my-1 min-h-6 py-1 ${data.breakfast ? 'btn-primary' : 'btn-secondary'} block`;
+  const breakfastClass = `w-full my-1 min-h-6 py-1 ${data.breakfast ? 'btn-checked-dish' : 'btn-passed-dish'} block`;
 
   return (
     <td className="mx-2">
       <Button
         onClick={() => handleClick('breakfast')}
         disabled={data.benefit}
-        className={data.benefit ? `${breakfastClass} bg-gray-500 hover:bg-gray-500` : breakfastClass}
+        className={data.benefit ? `${breakfastClass} btn-disabled-dish` : breakfastClass}
       >
         Breakfast
       </Button>
       <Button
         onClick={() => handleClick('lunch')}
-        className={`w-full my-1 min-h-6 py-1 ${data.lunch ? 'btn-primary' : 'btn-secondary'} block`}
+        className={`w-full my-1 min-h-6 py-1 ${data.lunch ? 'btn-checked-dish' : 'btn-passed-dish'} block`}
       >
         Lunch
       </Button>
