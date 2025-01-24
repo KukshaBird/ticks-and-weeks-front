@@ -1,6 +1,6 @@
 import WeekTableRow from './WeekTableRow.tsx';
 import { TableBody } from '../UI/Table';
-import { SetUserState, WeekDay, WeekRow } from './types.ts';
+import { SetUserState, WeekRow } from './types.ts';
 import User from '../../models/User.ts';
 import WeekTableDeleteCell from './WeekTableDeleteCell.tsx';
 import { EditUser } from '../User/EditUser.tsx';
@@ -8,6 +8,7 @@ import { getWeekDay } from './util.ts';
 import WeekTableCell from './WeekTableCell.tsx';
 import UserManager from '../../managers/UserManager.ts';
 import { DAYS, INIT_DAY_DATA } from './constants.ts';
+import { WeekDay } from '../../models/types.ts';
 
 interface WeekTableBodyProps {
   data: User[];

@@ -1,4 +1,4 @@
-import { WeekDay } from './types.ts';
+import { WeekDay } from '../../models/types.ts';
 
 interface Day {
   day: string;

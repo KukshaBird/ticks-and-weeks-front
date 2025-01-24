@@ -1,4 +1,4 @@
-import { WeekDay } from '../components/Week/types.ts';
+export type WeekDay = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
 
 export type Payment = {
   day: WeekDay;
