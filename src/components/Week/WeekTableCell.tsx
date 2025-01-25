@@ -29,14 +29,13 @@ export default function WeekTableCell({ data, onClick }: WeekTableCellProps) {
     }
   };
 
-  const breakfastClass = `w-full my-1 min-h-6 py-1 ${data.breakfast ? 'btn-checked-dish' : 'btn-passed-dish'} block`;
+  const checkedBreakfastClass = `w-full my-1 min-h-6 py-1 ${data.benefit ? 'btn-checked-benefit-dish' : 'btn-checked-dish'} block`;
 
   return (
     <td className="mx-2">
       <Button
         onClick={() => handleClick('breakfast')}
-        disabled={data.benefit}
-        className={data.benefit ? `${breakfastClass} btn-disabled-dish` : breakfastClass}
+        className={data.breakfast ? `${checkedBreakfastClass}` : 'w-full my-1 min-h-6 py-1 btn-passed-dish block'}
       >
         Breakfast
       </Button>

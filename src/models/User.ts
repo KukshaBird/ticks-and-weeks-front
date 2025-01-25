@@ -24,8 +24,8 @@ class User implements IUser {
 
   public balanceSpent(): number {
     return this.payments.reduce((acc, payment) => {
+      const breakfastRent = !this.benefit && payment.breakfast ? BREAKFAST : 0;
       const lunchRent = payment.lunch ? LUNCH : 0;
-      const breakfastRent = payment.breakfast ? BREAKFAST : 0;
       return acc + lunchRent + breakfastRent;
     }, 0);
   }
