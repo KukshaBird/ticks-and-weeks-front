@@ -32,7 +32,7 @@ export function Week() {
   useEffect(() => {
     async function fetchUsers(): Promise<void> {
       const users = await fetchUsersCb();
-      setData(users);
+      setData(UserManager.sort(users));
     }
 
     fetchUsers().then();

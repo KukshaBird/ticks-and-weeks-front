@@ -39,6 +39,11 @@ class UserManager implements IUserManager {
   private createUserModel(user: IUser): User {
     return User.fromJSON(user);
   }
+
+  public sort(users: User[]): User[] {
+    const sorted = [...users];
+    return sorted.sort((a, b) => a.name.localeCompare(b.name));
+  }
 }
 
 export default new UserManager(UserService);
