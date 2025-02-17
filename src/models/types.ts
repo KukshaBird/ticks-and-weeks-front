@@ -40,6 +40,16 @@ export interface EditUser {
   balance?: Omit<Balance, 'now' | 'removed'>;
 }
 
+export type WeekDayTotal = {
+  users: string[];
+  count: number;
+  total: number;
+};
+
+export type WeekDaysTotals = {
+  [key: string]: WeekDayTotal;
+};
+
 export interface BaseDish {
   name: string;
   price: number;

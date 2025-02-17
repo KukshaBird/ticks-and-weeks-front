@@ -1,6 +1,7 @@
 import User from '../models/User.ts';
 import UserService, { IUserService } from '../services/user.service.ts';
-import { BaseUser, EditUser, IUser } from '../models/types.ts';
+import { BaseUser, EditUser, IUser, WeekDaysTotals } from '../models/types.ts';
+import DishManager, { IDishManager } from './DishManager.ts';
 
 interface IUserManager {
   getAll(): Promise<User[]>;
@@ -9,7 +10,10 @@ interface IUserManager {
 }
 
 class UserManager implements IUserManager {
-  constructor(private userService: IUserService) {}
+  constructor(
+    private userService: IUserService,
+    private dishManager: IDishManager
+  ) {}
 
   public async getAll(): Promise<User[]> {
     const usersData = await this.userService.fetchAll();
@@ -44,6 +48,42 @@ class UserManager implements IUserManager {
     const sorted = [...users];
     return sorted.sort((a, b) => a.name.localeCompare(b.name));
   }
+
+  public async dishPerDay(): Promise<WeekDaysTotals> {
+    const dishes = await this.dishManager.getAll();
+    const data: {
+      [key: string]: {
+        users: string[];
+        count: number;
+        total: number;
+      };
+    } = {};
+    const users = await this.userService.fetchAll();
+    const lunchDish = this.dishManager.findDish('lunch', dishes);
+    if (!lunchDish) {
+      throw new Error('Lunch Dish not found!');
+    }
+    for (const user of users) {
+      user.payments.forEach((payment) => {
+        if (!payment.lunch) {
+          return;
+        }
+        if (payment.day in data) {
+          data[payment.day].users.push(user.name);
+          data[payment.day].count++;
+          data[payment.day].total += lunchDish.price;
+        } else {
+          data[payment.day] = {
+            users: [user.name],
+            count: 1,
+            total: lunchDish.price,
+          };
+        }
+      });
+    }
+
+    return data;
+  }
 }
 
-export default new UserManager(UserService);
+export default new UserManager(UserService, DishManager);

@@ -2,14 +2,20 @@ import Dish from '../models/Dish.ts';
 import DishService, { IDishService } from '../services/dish.service.ts';
 import { BaseDish, IDish, IEditDish } from '../models/types.ts';
 
-interface IDishManager {
+export interface IDishManager {
   getAll(): Promise<Dish[]>;
 
   saveAll(dishes: Dish[]): Promise<void>;
+
+  findDish(name: string, dishes: Dish[]): Dish | undefined;
 }
 
 class DishManager implements IDishManager {
   constructor(private userService: IDishService) {}
+
+  public findDish(name: string, dishes: Dish[]): Dish | undefined {
+    return dishes.find((dish) => dish.name === name);
+  }
 
   public async getAll(): Promise<Dish[]> {
     const dishesData = await this.userService.fetchAll();
