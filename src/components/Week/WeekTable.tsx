@@ -13,14 +13,16 @@ import User from '../../models/User.ts';
 import { WeekDay } from '../../models/types.ts';
 import { SetUserState, WeekRow } from './types.ts';
 import { fillTotals } from './utils.ts';
+import Dish from '../../models/Dish.ts';
 
 interface WeekTableProps {
   data: User[];
+  prices: Dish[];
   reRender: () => void;
   setNewData: SetUserState;
 }
 
-export default function WeekTable({ data, reRender, setNewData }: WeekTableProps) {
+export default function WeekTable({ data, prices, reRender, setNewData }: WeekTableProps) {
   const handleToggle = (
     { id, dayName }: { id: string; dayName: string },
     payment: {
@@ -78,8 +80,7 @@ export default function WeekTable({ data, reRender, setNewData }: WeekTableProps
         }
     );
 
-    // // TODO: Use Dish models;
-    fillTotals(totals, filledDays, data);
+    fillTotals(totals, filledDays, data, prices);
 
     const { startData, days, endData } = {
       startData: {
@@ -100,8 +101,8 @@ export default function WeekTable({ data, reRender, setNewData }: WeekTableProps
         />
       )),
       endData: {
-        spent: user.balanceSpent(),
-        left: user.balanceLeft(),
+        spent: user.balanceSpent(prices),
+        left: user.balanceLeft(prices),
       },
     };
 
@@ -109,8 +110,8 @@ export default function WeekTable({ data, reRender, setNewData }: WeekTableProps
   });
 
   totals.push(
-    data.reduce((acc, user) => acc + user.balanceSpent(), 0),
-    data.reduce((acc, user) => acc + user.balanceLeft(), 0)
+    data.reduce((acc, user) => acc + user.balanceSpent(prices), 0),
+    data.reduce((acc, user) => acc + user.balanceLeft(prices), 0)
   );
 
   return (

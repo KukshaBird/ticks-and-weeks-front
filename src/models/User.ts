@@ -1,9 +1,5 @@
 import { Balance, IUser, Payment } from './types.ts';
 
-//TODO: Use Dish models;
-const LUNCH = 95;
-const BREAKFAST = 75;
-
 class User implements IUser {
   constructor(
     public id: string,
@@ -18,14 +14,18 @@ class User implements IUser {
     return new User(data.id, data.name, Boolean(data.benefit), data.active, data.payments, data.balance);
   }
 
-  public balanceLeft(): number {
-    return this.balance.was + this.balance.added - this.balanceSpent();
+  public balanceLeft(prices: { name: string; price: number }[]): number {
+    return this.balance.was + this.balance.added - this.balanceSpent(prices);
   }
 
-  public balanceSpent(): number {
+  public balanceSpent(prices: { name: string; price: number }[]): number {
+    const lunchPrice = prices.find((price) => price.name === 'lunch');
+    const breakfastPrice = prices.find((price) => price.name === 'breakfast');
+
     return this.payments.reduce((acc, payment) => {
-      const breakfastRent = !this.benefit && payment.breakfast ? BREAKFAST : 0;
-      const lunchRent = payment.lunch ? LUNCH : 0;
+      // benefit related only for morning breakfast
+      const breakfastRent = !this.benefit && payment.breakfast && breakfastPrice ? breakfastPrice.price : 0;
+      const lunchRent = payment.lunch && lunchPrice ? lunchPrice.price : 0;
       return acc + lunchRent + breakfastRent;
     }, 0);
   }

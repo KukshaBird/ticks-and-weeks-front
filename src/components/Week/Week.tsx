@@ -57,7 +57,7 @@ export function Week() {
         <CreateUser onSubmit={() => setReRender((prevProps) => !prevProps)} />
       </div>
       <div className="mb-2.5 min-h-96 p-8">
-        <WeekTable data={data} setNewData={setData} reRender={reRenderDrill} />
+        <WeekTable data={data} prices={dishes} setNewData={setData} reRender={reRenderDrill} />
       </div>
     </>
   );

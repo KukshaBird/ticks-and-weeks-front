@@ -6,7 +6,20 @@ type Day = {
   breakfast: boolean;
 };
 
-export const fillTotals = (totals: number[], filledDays: Day[], users: User[]): void => {
+type Price = { name: string; price: number };
+
+const findPriceOrThrow = (name: string, prices: Price[]): number => {
+  const price = prices.find((price) => price.name === name);
+  if (!price) {
+    throw new Error(`Required price not found. Please create "${name}" dish`);
+  }
+  return price.price;
+};
+
+export const fillTotals = (totals: number[], filledDays: Day[], users: User[], prices: Price[]): void => {
+  const breakfastPrice = findPriceOrThrow('breakfast', prices);
+  const lunchPrice = findPriceOrThrow('lunch', prices);
+
   for (let i = 0; i < filledDays.length; i++) {
     const totalIndex = i + 2;
     totals[totalIndex] = users.reduce((acc, user) => {
@@ -14,10 +27,10 @@ export const fillTotals = (totals: number[], filledDays: Day[], users: User[]): 
       const paymentData = user.payments.find((payment) => payment.day === filledDays[i].day);
       if (paymentData) {
         if (paymentData.breakfast) {
-          addSum += user.benefit ? 0 : 75;
+          addSum += user.benefit ? 0 : breakfastPrice;
         }
         if (paymentData.lunch) {
-          addSum += 95;
+          addSum += lunchPrice;
         }
       }
       return acc + addSum;
