@@ -30,8 +30,8 @@ class DishManager implements IDishManager {
     await this.userService.create(userData);
   }
 
-  public async delete(userId: string): Promise<void> {
-    return await this.userService.delete(userId);
+  public async delete(dishId: string): Promise<void> {
+    return await this.userService.delete(dishId);
   }
 
   public async edit(data: IEditDish): Promise<void> {
@@ -39,11 +39,11 @@ class DishManager implements IDishManager {
   }
 
   public createModels(dishes: IDish[]): Dish[] {
-    return dishes.map((user: IDish) => this.createModel(user));
+    return dishes.map((dish: IDish) => this.createModel(dish));
   }
 
-  private createModel(user: IDish): Dish {
-    return Dish.fromJSON(user);
+  private createModel(dish: IDish): Dish {
+    return Dish.fromJSON(dish);
   }
 }
 
