@@ -7,9 +7,31 @@ export interface IDishService
     MayDeleteService,
     MayEditService<IEditDish> {}
 
+/**
+ * This defaults should be implemented on the server side with the true DB would be implemented. Until that,
+ * it remains here as a rudiment with a temporary local storage persistence module.
+ */
+const DEFAULT_PRISES = {
+  LUNCH: 75,
+  BREAKFAST: 95,
+};
+const DEFAULT_DISHES: BaseDish[] = [
+  { name: 'lunch', price: DEFAULT_PRISES.LUNCH },
+  { name: 'breakfast', price: DEFAULT_PRISES.BREAKFAST },
+];
+
 class LocalStorageDishService implements IService<IDish>, IDishService {
+  private readonly STORAGE_KEY = 'dishes';
+
+  constructor() {
+    const isStorageExists = localStorage.getItem(this.STORAGE_KEY);
+    if (!isStorageExists) {
+      this.seedDefaults();
+    }
+  }
+
   public fetchAll(): Promise<IDish[]> {
-    const fetched = localStorage.getItem('dishes');
+    const fetched = localStorage.getItem(this.STORAGE_KEY);
     if (fetched != null) {
       return JSON.parse(fetched);
     } else {
@@ -18,19 +40,19 @@ class LocalStorageDishService implements IService<IDish>, IDishService {
   }
 
   public saveAll(data: IDish[]): Promise<void> {
-    localStorage.setItem('dishes', JSON.stringify(data));
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
     return Promise.resolve();
   }
 
   public async create(data: BaseDish): Promise<void> {
-    const fetched: IDish[] = JSON.parse(localStorage.getItem('dishes') || '[]');
+    const fetched: IDish[] = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
     const shapedItem = this.shapeItem(data);
 
     return await this.saveAll([...fetched, shapedItem]);
   }
 
   public async delete(id: string): Promise<void> {
-    const fetched: IDish[] = JSON.parse(localStorage.getItem('dishes') || '[]');
+    const fetched: IDish[] = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
     if (fetched != null) {
       const filteredItems = fetched.filter((dish) => dish.id !== id);
       await this.saveAll(filteredItems);
@@ -38,7 +60,7 @@ class LocalStorageDishService implements IService<IDish>, IDishService {
   }
 
   public async edit(data: IEditDish): Promise<void> {
-    const fetched: IDish[] = JSON.parse(localStorage.getItem('dishes') || '[]');
+    const fetched: IDish[] = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
     const itemIndex = fetched.findIndex((item) => item.id === data.id);
     if (itemIndex != -1) {
       const oldItem = { ...fetched[itemIndex] };
@@ -65,6 +87,10 @@ class LocalStorageDishService implements IService<IDish>, IDishService {
       ...data,
       id: uuid,
     };
+  }
+
+  private seedDefaults(): void {
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(DEFAULT_DISHES));
   }
 }
 
