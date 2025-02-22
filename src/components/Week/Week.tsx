@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import WeekTable from './WeekTable.tsx';
 import { CreateUser } from '../User/CreateUser.tsx';
 
@@ -13,13 +13,10 @@ import { WeekContext } from '../../store/store.ts';
 
 export function Week() {
   const { users, dishes, setUsers, setDishes } = useContext(WeekContext);
-  const [reRender, setReRender] = useState(false);
 
   const fetchUsersCb = useCallback(async () => UserManager.getAll(), []);
   const fetchDishesCb = useCallback(async () => DishManager.getAll(), []);
   const saveUsersCb = useCallback(async (users: User[]) => UserManager.saveAll(users), []);
-
-  const reRenderDrill = () => setReRender((prevProps) => !prevProps);
 
   useEffect(() => {
     async function fetchDishes(): Promise<void> {
@@ -37,7 +34,7 @@ export function Week() {
     }
 
     fetchUsers().then();
-  }, [fetchUsersCb, reRender, setUsers]);
+  }, [fetchUsersCb, setUsers]);
 
   useEffect(() => {
     if (users.length) {
@@ -53,12 +50,12 @@ export function Week() {
     <>
       <WeekTitle />
       <div className={'flex items-center justify-end w-full h-6'}>
-        <DishList dishes={dishes} reRender={() => setReRender((prevProps) => !prevProps)} />
-        <CreateUser onSubmit={() => setReRender((prevProps) => !prevProps)} />
+        <DishList dishes={dishes} />
+        <CreateUser />
         <ResetTable />
       </div>
       <div className="mb-2.5 min-h-96 p-8">
-        <WeekTable data={users} prices={dishes} setNewData={setUsers} reRender={reRenderDrill} />
+        <WeekTable data={users} prices={dishes} setNewData={setUsers} />
       </div>
     </>
   );

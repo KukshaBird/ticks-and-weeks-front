@@ -9,10 +9,9 @@ import EditIcon from '../UI/icons/EditIcon.tsx';
 
 interface EditDishesProps {
   dishes: Dish[];
-  reRender: () => void;
 }
 
-export default function EditDishes({ dishes, reRender }: EditDishesProps): ReactElement {
+export default function EditDishes({ dishes }: EditDishesProps): ReactElement {
   const modal = useRef<ModalDisplayHandle>(null);
 
   const handleCloseModel = () => {
@@ -28,9 +27,7 @@ export default function EditDishes({ dishes, reRender }: EditDishesProps): React
   };
 
   const onSubmit = (data: IEditDish) => {
-    DishManager.edit(data).then(() => {
-      reRender();
-    });
+    DishManager.edit(data).then(() => {});
   };
 
   return (

@@ -4,10 +4,9 @@ import EditDishes from './EditDishes.tsx';
 
 interface DishListProps {
   dishes: Dish[];
-  reRender: () => void;
 }
 
-export default function DishList({ dishes, reRender }: DishListProps) {
+export default function DishList({ dishes }: DishListProps) {
   return (
     <div className={'ml-4 flex justify-start content-center w-full gap-4'}>
       <ul className={'flex items-center justify-start gap-2'}>
@@ -19,7 +18,7 @@ export default function DishList({ dishes, reRender }: DishListProps) {
           </li>
         ))}
       </ul>
-      <EditDishes dishes={dishes} reRender={reRender} />
+      <EditDishes dishes={dishes} />
     </div>
   );
 }

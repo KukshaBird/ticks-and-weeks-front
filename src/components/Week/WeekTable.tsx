@@ -18,11 +18,10 @@ import Dish from '../../models/Dish.ts';
 interface WeekTableProps {
   data: User[];
   prices: Dish[];
-  reRender: () => void;
   setNewData: SetUserState;
 }
 
-export default function WeekTable({ data, prices, reRender, setNewData }: WeekTableProps) {
+export default function WeekTable({ data, prices, setNewData }: WeekTableProps) {
   const handleToggle = (
     { id, dayName }: { id: string; dayName: string },
     payment: {
@@ -85,7 +84,7 @@ export default function WeekTable({ data, prices, reRender, setNewData }: WeekTa
     const { startData, days, endData } = {
       startData: {
         deleteButton: <WeekTableDeleteCell id={user.id} onDelete={handleDeleteUser} />,
-        edit: <EditUser onSubmit={reRender} user={user} />,
+        edit: <EditUser onSubmit={() => {}} user={user} />,
         order: index + 1,
         name: user.name,
         was: user.balance.was,

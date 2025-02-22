@@ -1,16 +1,15 @@
-import { ReactElement, useRef } from 'react';
+import { ReactElement, useContext, useRef } from 'react';
 import { UserForm } from './UserForm.tsx';
 
 import Button from '../UI/Button.tsx';
 import { Modal, ModalDisplayHandle } from '../UI/Modal.tsx';
 import UserManager from '../../managers/UserManager.ts';
 import { BaseUser, CreateUser as CreateUserProps } from '../../models/types.ts';
+import { WeekContext } from '../../store/store.ts';
+import User from '../../models/User.ts';
 
-interface Props {
-  onSubmit: () => void;
-}
-
-export function CreateUser({ onSubmit }: Props): ReactElement {
+export function CreateUser(): ReactElement {
+  const { setUsers } = useContext(WeekContext);
   const modal = useRef<ModalDisplayHandle>(null);
 
   const handleClickCrate = (userData: CreateUserProps) => {
@@ -26,8 +25,10 @@ export function CreateUser({ onSubmit }: Props): ReactElement {
         added: userData.addedBalance || 0,
       },
     };
-    UserManager.createUser(baseUser).then(() => {
-      onSubmit();
+    UserManager.createUser(baseUser).then((newUser: User) => {
+      setUsers((users: User[]) => {
+        return [...users, newUser];
+      });
     });
   };
 
