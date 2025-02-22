@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import WeekTable from './WeekTable.tsx';
 import { CreateUser } from '../User/CreateUser.tsx';
 
@@ -6,14 +6,13 @@ import User from '../../models/User.ts';
 
 import UserManager from '../../managers/UserManager.ts';
 import DishList from '../Dish/DishList.tsx';
-import Dish from '../../models/Dish.ts';
 import DishManager from '../../managers/DishManager.ts';
 import WeekTitle from './WeekTitle.tsx';
 import ResetTable from './ResetTable.tsx';
+import { WeekContext } from '../../store/store.ts';
 
 export function Week() {
-  const [data, setData] = React.useState<User[]>([]);
-  const [dishes, setDishes] = React.useState<Dish[]>([]);
+  const { users, dishes, setUsers, setDishes } = useContext(WeekContext);
   const [reRender, setReRender] = useState(false);
 
   const fetchUsersCb = useCallback(async () => UserManager.getAll(), []);
@@ -29,26 +28,26 @@ export function Week() {
     }
 
     fetchDishes().then();
-  }, [fetchDishesCb]);
+  }, [fetchDishesCb, setDishes]);
 
   useEffect(() => {
     async function fetchUsers(): Promise<void> {
       const users = await fetchUsersCb();
-      setData(UserManager.sort(users));
+      setUsers(UserManager.sort(users));
     }
 
     fetchUsers().then();
-  }, [fetchUsersCb, reRender]);
+  }, [fetchUsersCb, reRender, setUsers]);
 
   useEffect(() => {
-    if (data.length) {
+    if (users.length) {
       async function saveUsers(users: User[]) {
         await saveUsersCb(users);
       }
 
-      saveUsers(data).then();
+      saveUsers(users).then();
     }
-  }, [data, saveUsersCb]);
+  }, [users, saveUsersCb]);
 
   return (
     <>
@@ -59,7 +58,7 @@ export function Week() {
         <ResetTable />
       </div>
       <div className="mb-2.5 min-h-96 p-8">
-        <WeekTable data={data} prices={dishes} setNewData={setData} reRender={reRenderDrill} />
+        <WeekTable data={users} prices={dishes} setNewData={setUsers} reRender={reRenderDrill} />
       </div>
     </>
   );
