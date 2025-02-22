@@ -45,6 +45,10 @@ class DishManager implements IDishManager {
   private createModel(dish: IDish): Dish {
     return Dish.fromJSON(dish);
   }
+
+  public async purge(): Promise<void> {
+    await this.userService.purge();
+  }
 }
 
 export default new DishManager(DishService);

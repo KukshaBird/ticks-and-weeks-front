@@ -19,3 +19,7 @@ export interface MayDeleteService {
 export interface MayEditService<T> {
   edit(data: T): Promise<void>;
 }
+
+export interface MayPurgeAll {
+  purge(): Promise<void>;
+}

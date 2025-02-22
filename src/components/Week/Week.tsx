@@ -9,6 +9,7 @@ import DishList from '../Dish/DishList.tsx';
 import Dish from '../../models/Dish.ts';
 import DishManager from '../../managers/DishManager.ts';
 import WeekTitle from './WeekTitle.tsx';
+import ResetTable from './ResetTable.tsx';
 
 export function Week() {
   const [data, setData] = React.useState<User[]>([]);
@@ -55,6 +56,7 @@ export function Week() {
       <div className={'flex items-center justify-end w-full h-6'}>
         <DishList dishes={dishes} reRender={() => setReRender((prevProps) => !prevProps)} />
         <CreateUser onSubmit={() => setReRender((prevProps) => !prevProps)} />
+        <ResetTable />
       </div>
       <div className="mb-2.5 min-h-96 p-8">
         <WeekTable data={data} prices={dishes} setNewData={setData} reRender={reRenderDrill} />

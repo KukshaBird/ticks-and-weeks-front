@@ -1,15 +1,18 @@
 import { BaseUser, EditUser, IUser } from '../models/types.ts';
-import { IService, MayCreateService, MayDeleteService, MayEditService } from './types.ts';
+import { IService, MayCreateService, MayDeleteService, MayEditService, MayPurgeAll } from './types.ts';
 
 export interface IUserService
   extends IService<IUser>,
     MayCreateService<BaseUser>,
     MayDeleteService,
-    MayEditService<EditUser> {}
+    MayEditService<EditUser>,
+    MayPurgeAll {}
 
 class LocalStorageUserService implements IService<IUser>, IUserService {
+  private STORAGE_KEY: string = 'users';
+
   public fetchAll(): Promise<IUser[]> {
-    const fetchedUsers = localStorage.getItem('users');
+    const fetchedUsers = localStorage.getItem(this.STORAGE_KEY);
     if (fetchedUsers != null) {
       return JSON.parse(fetchedUsers);
     } else {
@@ -18,19 +21,19 @@ class LocalStorageUserService implements IService<IUser>, IUserService {
   }
 
   public saveAll(data: IUser[]): Promise<void> {
-    localStorage.setItem('users', JSON.stringify(data));
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
     return Promise.resolve();
   }
 
   public async create(data: BaseUser): Promise<void> {
-    const fetchedUsers: IUser[] = JSON.parse(localStorage.getItem('users') || '[]');
+    const fetchedUsers: IUser[] = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
     const shapedUser = this.shapeUser(data);
 
     return await this.saveAll([...fetchedUsers, shapedUser]);
   }
 
   public async delete(id: string): Promise<void> {
-    const fetchedUsers: IUser[] = JSON.parse(localStorage.getItem('users') || '[]');
+    const fetchedUsers: IUser[] = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
     if (fetchedUsers != null) {
       const filteredUsers = fetchedUsers.filter((user) => user.id !== id);
       await this.saveAll(filteredUsers);
@@ -38,7 +41,7 @@ class LocalStorageUserService implements IService<IUser>, IUserService {
   }
 
   public async edit(data: EditUser): Promise<void> {
-    const fetchedUsers: IUser[] = JSON.parse(localStorage.getItem('users') || '[]');
+    const fetchedUsers: IUser[] = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
     const userIndex = fetchedUsers.findIndex((user) => user.id === data.id);
     if (userIndex != -1) {
       const oldUser = { ...fetchedUsers[userIndex] };
@@ -58,6 +61,10 @@ class LocalStorageUserService implements IService<IUser>, IUserService {
 
       await this.saveAll(fetchedUsers);
     }
+  }
+
+  public async purge(): Promise<void> {
+    localStorage.removeItem(this.STORAGE_KEY);
   }
 
   /**
@@ -98,6 +105,10 @@ export class UserService {
 
   public async edit(data: EditUser): Promise<void> {
     await this.service.edit(data);
+  }
+
+  public async purge(): Promise<void> {
+    await this.service.purge();
   }
 }
 

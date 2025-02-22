@@ -1,11 +1,12 @@
 import { BaseDish, IDish, IEditDish } from '../models/types.ts';
-import { IService, MayCreateService, MayDeleteService, MayEditService } from './types.ts';
+import { IService, MayCreateService, MayDeleteService, MayEditService, MayPurgeAll } from './types.ts';
 
 export interface IDishService
   extends IService<IDish>,
     MayCreateService<BaseDish>,
     MayDeleteService,
-    MayEditService<IEditDish> {}
+    MayEditService<IEditDish>,
+    MayPurgeAll {}
 
 /**
  * This defaults should be implemented on the server side with the true DB would be implemented. Until that,
@@ -74,6 +75,10 @@ class LocalStorageDishService implements IService<IDish>, IDishService {
     }
   }
 
+  public async purge(): Promise<void> {
+    localStorage.removeItem(this.STORAGE_KEY);
+  }
+
   /**
    *
    * @param data
@@ -116,6 +121,10 @@ export class DishService {
 
   public async edit(data: IEditDish): Promise<void> {
     await this.service.edit(data);
+  }
+
+  public async purge(): Promise<void> {
+    await this.service.purge();
   }
 }
 

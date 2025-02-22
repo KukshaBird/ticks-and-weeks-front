@@ -84,6 +84,10 @@ class UserManager implements IUserManager {
 
     return data;
   }
+
+  public async purge(): Promise<void> {
+    await this.userService.purge();
+  }
 }
 
 export default new UserManager(UserService, DishManager);
