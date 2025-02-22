@@ -1,11 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import Button from '../UI/Button.tsx';
 import UserManager from '../../managers/UserManager.ts';
 import DishManager from '../../managers/DishManager.ts';
 import { Modal, ModalDisplayHandle } from '../UI/Modal.tsx';
 import ConfirmationWarning from '../UI/ConfirmationWarning.tsx';
+import { WeekContext } from '../../store/store.ts';
 
 export default function ResetTable(): React.ReactElement {
+  const { setUsers } = useContext(WeekContext);
   const modal = useRef<ModalDisplayHandle>(null);
 
   const handleCloseModal = () => {
@@ -24,6 +26,7 @@ export default function ResetTable(): React.ReactElement {
     const purgeWeekData = async (): Promise<void> => {
       await UserManager.purge();
       await DishManager.purge();
+      setUsers([]);
     };
     purgeWeekData().then();
   };
