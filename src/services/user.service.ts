@@ -25,11 +25,11 @@ class LocalStorageUserService implements IService<IUser>, IUserService {
     return Promise.resolve();
   }
 
-  public async create(data: BaseUser): Promise<void> {
+  public async create(data: BaseUser): Promise<IUser> {
     const fetchedUsers: IUser[] = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
     const shapedUser = this.shapeUser(data);
-
-    return await this.saveAll([...fetchedUsers, shapedUser]);
+    await this.saveAll([...fetchedUsers, shapedUser]);
+    return shapedUser;
   }
 
   public async delete(id: string): Promise<void> {
@@ -95,8 +95,8 @@ export class UserService {
     return Promise.resolve();
   }
 
-  public async create(data: BaseUser): Promise<void> {
-    await this.service.create(data);
+  public async create(data: BaseUser): Promise<IUser> {
+    return await this.service.create(data);
   }
 
   public async delete(id: string): Promise<void> {

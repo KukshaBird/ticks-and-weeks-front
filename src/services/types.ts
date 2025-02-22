@@ -9,7 +9,7 @@ export interface MayReadService<T> {
 }
 
 export interface MayCreateService<T> {
-  create(data: T): Promise<void>;
+  create(data: T): Promise<T & { id: string }>;
 }
 
 export interface MayDeleteService {

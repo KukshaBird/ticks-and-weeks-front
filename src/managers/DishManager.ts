@@ -26,8 +26,9 @@ class DishManager implements IDishManager {
     return this.userService.saveAll(dishes);
   }
 
-  public async create(userData: BaseDish): Promise<void> {
-    await this.userService.create(userData);
+  public async create(userData: BaseDish): Promise<Dish> {
+    const newDish = await this.userService.create(userData);
+    return this.createModel(newDish);
   }
 
   public async delete(dishId: string): Promise<void> {

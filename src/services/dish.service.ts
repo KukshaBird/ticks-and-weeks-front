@@ -45,11 +45,11 @@ class LocalStorageDishService implements IService<IDish>, IDishService {
     return Promise.resolve();
   }
 
-  public async create(data: BaseDish): Promise<void> {
+  public async create(data: BaseDish): Promise<IDish> {
     const fetched: IDish[] = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
     const shapedItem = this.shapeItem(data);
-
-    return await this.saveAll([...fetched, shapedItem]);
+    await this.saveAll([...fetched, shapedItem]);
+    return shapedItem;
   }
 
   public async delete(id: string): Promise<void> {
@@ -95,7 +95,9 @@ class LocalStorageDishService implements IService<IDish>, IDishService {
   }
 
   private seedDefaults(): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(DEFAULT_DISHES));
+    DEFAULT_DISHES.forEach((dish) => {
+      this.create(dish).then();
+    });
   }
 }
 
@@ -111,8 +113,8 @@ export class DishService {
     return Promise.resolve();
   }
 
-  public async create(data: BaseDish): Promise<void> {
-    await this.service.create(data);
+  public async create(data: BaseDish): Promise<IDish> {
+    return await this.service.create(data);
   }
 
   public async delete(id: string): Promise<void> {

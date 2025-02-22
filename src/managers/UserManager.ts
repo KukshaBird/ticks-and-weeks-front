@@ -24,8 +24,9 @@ class UserManager implements IUserManager {
     return this.userService.saveAll(users);
   }
 
-  public async createUser(userData: BaseUser): Promise<void> {
-    await this.userService.create(userData);
+  public async createUser(userData: BaseUser): Promise<User> {
+    const newUser = await this.userService.create(userData);
+    return this.createUserModel(newUser);
   }
 
   public async deleteUser(userId: string): Promise<void> {
