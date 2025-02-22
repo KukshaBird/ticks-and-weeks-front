@@ -35,8 +35,9 @@ class DishManager implements IDishManager {
     return await this.userService.delete(dishId);
   }
 
-  public async edit(data: IEditDish): Promise<void> {
-    await this.userService.edit(data);
+  public async edit(data: IEditDish): Promise<Dish> {
+    const updated = await this.userService.edit(data);
+    return this.createModel(updated);
   }
 
   public createModels(dishes: IDish[]): Dish[] {

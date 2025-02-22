@@ -125,8 +125,8 @@ export class DishService {
     await this.service.delete(id);
   }
 
-  public async edit(data: IEditDish): Promise<void> {
-    await this.service.edit(data);
+  public async edit(data: IEditDish): Promise<IDish> {
+    return await this.service.edit(data);
   }
 
   public async purge(): Promise<void> {
