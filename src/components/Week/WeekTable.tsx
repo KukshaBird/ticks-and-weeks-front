@@ -84,7 +84,7 @@ export default function WeekTable({ data, prices, setNewData }: WeekTableProps) 
     const { startData, days, endData } = {
       startData: {
         deleteButton: <WeekTableDeleteCell id={user.id} onDelete={handleDeleteUser} />,
-        edit: <EditUser onSubmit={() => {}} user={user} />,
+        edit: <EditUser user={user} />,
         order: index + 1,
         name: user.name,
         was: user.balance.was,

@@ -1,4 +1,4 @@
-import { ReactElement, useRef } from 'react';
+import { ReactElement, useContext, useRef } from 'react';
 import { UserForm } from './UserForm.tsx';
 
 import Button from '../UI/Button.tsx';
@@ -8,13 +8,14 @@ import { Modal, ModalDisplayHandle } from '../UI/Modal.tsx';
 import { CreateUser as CreateUserProps, EditUser as IEditUser } from '../../models/types.ts';
 import UserManager from '../../managers/UserManager.ts';
 import User from '../../models/User.ts';
+import { WeekContext } from '../../store/store.ts';
 
 interface Props {
-  onSubmit: () => void;
   user: User;
 }
 
-export function EditUser({ onSubmit, user }: Props): ReactElement {
+export function EditUser({ user }: Props): ReactElement {
+  const { setUsers } = useContext(WeekContext);
   const modal = useRef<ModalDisplayHandle>(null);
 
   const handleSubmit = (userData: CreateUserProps) => {
@@ -29,8 +30,12 @@ export function EditUser({ onSubmit, user }: Props): ReactElement {
       benefit: Boolean(userData.benefit),
     };
 
-    UserManager.editUser(prepared).then(() => {
-      onSubmit();
+    UserManager.editUser(prepared).then((user: User) => {
+      setUsers((prevUsers) => {
+        return prevUsers.some((u) => u.id === user.id)
+          ? prevUsers.map((u) => (u.id === user.id ? user : u))
+          : [...prevUsers, user];
+      });
     });
   };
 

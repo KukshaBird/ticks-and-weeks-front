@@ -5,7 +5,7 @@ export interface IUserService
   extends IService<IUser>,
     MayCreateService<BaseUser>,
     MayDeleteService,
-    MayEditService<EditUser>,
+    MayEditService<EditUser, IUser>,
     MayPurgeAll {}
 
 class LocalStorageUserService implements IService<IUser>, IUserService {
@@ -40,12 +40,12 @@ class LocalStorageUserService implements IService<IUser>, IUserService {
     }
   }
 
-  public async edit(data: EditUser): Promise<void> {
+  public async edit(data: EditUser): Promise<IUser> {
     const fetchedUsers: IUser[] = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
     const userIndex = fetchedUsers.findIndex((user) => user.id === data.id);
     if (userIndex != -1) {
       const oldUser = { ...fetchedUsers[userIndex] };
-      fetchedUsers.splice(userIndex, 1, {
+      const updatedUser = {
         ...oldUser,
         name: data.name || oldUser.name,
         active: data.active ?? oldUser.active,
@@ -57,9 +57,14 @@ class LocalStorageUserService implements IService<IUser>, IUserService {
               added: data.balance.added,
             }
           : oldUser.balance,
-      });
+      };
+      fetchedUsers.splice(userIndex, 1, updatedUser);
 
       await this.saveAll(fetchedUsers);
+
+      return updatedUser;
+    } else {
+      throw new Error('User not found');
     }
   }
 
@@ -103,8 +108,8 @@ export class UserService {
     await this.service.delete(id);
   }
 
-  public async edit(data: EditUser): Promise<void> {
-    await this.service.edit(data);
+  public async edit(data: EditUser): Promise<IUser> {
+    return await this.service.edit(data);
   }
 
   public async purge(): Promise<void> {

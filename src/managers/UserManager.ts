@@ -33,8 +33,9 @@ class UserManager implements IUserManager {
     return await this.userService.delete(userId);
   }
 
-  public async editUser(data: EditUser): Promise<void> {
-    await this.userService.edit(data);
+  public async editUser(data: EditUser): Promise<User> {
+    const updatedUser = await this.userService.edit(data);
+    return this.createUserModel(updatedUser);
   }
 
   public createUserModels(users: IUser[]): User[] {

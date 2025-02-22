@@ -5,7 +5,7 @@ export interface IDishService
   extends IService<IDish>,
     MayCreateService<BaseDish>,
     MayDeleteService,
-    MayEditService<IEditDish>,
+    MayEditService<IEditDish, IDish>,
     MayPurgeAll {}
 
 /**
@@ -13,8 +13,8 @@ export interface IDishService
  * it remains here as a rudiment with a temporary local storage persistence module.
  */
 const DEFAULT_PRISES = {
-  LUNCH: 75,
-  BREAKFAST: 95,
+  LUNCH: 95,
+  BREAKFAST: 75,
 };
 const DEFAULT_DISHES: BaseDish[] = [
   { name: 'lunch', price: DEFAULT_PRISES.LUNCH },
@@ -60,18 +60,22 @@ class LocalStorageDishService implements IService<IDish>, IDishService {
     }
   }
 
-  public async edit(data: IEditDish): Promise<void> {
+  public async edit(data: IEditDish): Promise<IDish> {
     const fetched: IDish[] = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
     const itemIndex = fetched.findIndex((item) => item.id === data.id);
     if (itemIndex != -1) {
       const oldItem = { ...fetched[itemIndex] };
-      fetched.splice(itemIndex, 1, {
+      const updatedItem: IDish = {
         ...oldItem,
         name: data.name ?? oldItem.name,
         price: data.price ?? oldItem.price,
-      });
+      };
+      fetched.splice(itemIndex, 1, updatedItem);
 
       await this.saveAll(fetched);
+      return updatedItem;
+    } else {
+      throw new Error(`Dish with id ${data.id} not found`);
     }
   }
 
