@@ -1,12 +1,5 @@
-import { BaseDish, IDish, IEditDish } from '../models/types.ts';
-import { IService, MayCreateService, MayDeleteService, MayEditService, MayPurgeAll } from './types.ts';
-
-export interface IDishService
-  extends IService<IDish>,
-    MayCreateService<BaseDish>,
-    MayDeleteService,
-    MayEditService<IEditDish, IDish>,
-    MayPurgeAll {}
+import { BaseDish, IDish, IEditDish } from '../../models/types.ts';
+import { IDishService } from '../dish';
 
 /**
  * This defaults should be implemented on the server side with the true DB would be implemented. Until that,
@@ -21,7 +14,7 @@ const DEFAULT_DISHES: BaseDish[] = [
   { name: 'breakfast', price: DEFAULT_PRISES.BREAKFAST },
 ];
 
-class LocalStorageDishService implements IService<IDish>, IDishService {
+class LocalStorageDishService implements IDishService {
   private readonly STORAGE_KEY = 'dishes';
 
   constructor() {
@@ -105,33 +98,4 @@ class LocalStorageDishService implements IService<IDish>, IDishService {
   }
 }
 
-export class DishService {
-  constructor(private service: IDishService) {}
-
-  public async fetchAll(): Promise<IDish[]> {
-    return await this.service.fetchAll();
-  }
-
-  public async saveAll(data: IDish[]): Promise<void> {
-    await this.service.saveAll(data);
-    return Promise.resolve();
-  }
-
-  public async create(data: BaseDish): Promise<IDish> {
-    return await this.service.create(data);
-  }
-
-  public async delete(id: string): Promise<void> {
-    await this.service.delete(id);
-  }
-
-  public async edit(data: IEditDish): Promise<IDish> {
-    return await this.service.edit(data);
-  }
-
-  public async purge(): Promise<void> {
-    await this.service.purge();
-  }
-}
-
-export default new DishService(new LocalStorageDishService());
+export default LocalStorageDishService;

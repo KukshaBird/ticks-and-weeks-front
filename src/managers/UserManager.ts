@@ -1,5 +1,5 @@
 import User from '../models/User.ts';
-import UserService, { IUserService } from '../services/user.service.ts';
+import UserService, { IUserService } from '../services/user';
 import { BaseUser, EditUser, IUser, WeekDaysTotals } from '../models/types.ts';
 import DishManager, { IDishManager } from './DishManager.ts';
 

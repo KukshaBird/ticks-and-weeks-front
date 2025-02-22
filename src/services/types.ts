@@ -4,18 +4,22 @@ export interface IService<T> {
   saveAll(data: T[]): Promise<void>;
 }
 
-type WithID<T> = T & { id: string };
+export interface CRUDService<Create, Retrieve, Update>
+  extends IService<Retrieve>,
+    MayCreateService<Create, Retrieve>,
+    MayDeleteService,
+    MayEditService<Update, Retrieve> {}
 
 export interface MayReadService<T> {
   fetchAll(): Promise<T[]>;
 }
 
-export interface MayCreateService<T> {
-  create(data: T): Promise<WithID<T>>;
+export interface MayCreateService<CreateData, ReturnType> {
+  create(data: CreateData): Promise<ReturnType>;
 }
 
-export interface MayDeleteService {
-  delete(id: string): Promise<void>;
+export interface MayDeleteService<ReturnType = void> {
+  delete(id: string): Promise<ReturnType>;
 }
 
 export interface MayEditService<EditType, ReturnType> {

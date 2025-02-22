@@ -1,14 +1,8 @@
-import { BaseUser, EditUser, IUser } from '../models/types.ts';
-import { IService, MayCreateService, MayDeleteService, MayEditService, MayPurgeAll } from './types.ts';
+import { IService } from '../types.ts';
+import { BaseUser, EditUser, IUser } from '../../models/types.ts';
+import { IUserService } from './index.ts';
 
-export interface IUserService
-  extends IService<IUser>,
-    MayCreateService<BaseUser>,
-    MayDeleteService,
-    MayEditService<EditUser, IUser>,
-    MayPurgeAll {}
-
-class LocalStorageUserService implements IService<IUser>, IUserService {
+export class LocalStorageUserService implements IService<IUser>, IUserService {
   private STORAGE_KEY: string = 'users';
 
   public fetchAll(): Promise<IUser[]> {
@@ -87,34 +81,3 @@ class LocalStorageUserService implements IService<IUser>, IUserService {
     };
   }
 }
-
-export class UserService {
-  constructor(private service: IUserService) {}
-
-  public async fetchAll(): Promise<IUser[]> {
-    return await this.service.fetchAll();
-  }
-
-  public async saveAll(data: IUser[]): Promise<void> {
-    await this.service.saveAll(data);
-    return Promise.resolve();
-  }
-
-  public async create(data: BaseUser): Promise<IUser> {
-    return await this.service.create(data);
-  }
-
-  public async delete(id: string): Promise<void> {
-    await this.service.delete(id);
-  }
-
-  public async edit(data: EditUser): Promise<IUser> {
-    return await this.service.edit(data);
-  }
-
-  public async purge(): Promise<void> {
-    await this.service.purge();
-  }
-}
-
-export default new UserService(new LocalStorageUserService());

@@ -1,5 +1,5 @@
 import Dish from '../models/Dish.ts';
-import DishService, { IDishService } from '../services/dish.service.ts';
+import DishService, { IDishService } from '../services/dish';
 import { BaseDish, IDish, IEditDish } from '../models/types.ts';
 
 export interface IDishManager {
