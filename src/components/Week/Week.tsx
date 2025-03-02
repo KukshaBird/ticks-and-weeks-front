@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import WeekTable from './WeekTable.tsx';
 import { CreateUser } from '../User/CreateUser.tsx';
 
@@ -9,11 +9,15 @@ import DishList from '../Dish/DishList.tsx';
 import DishManager from '../../managers/DishManager.ts';
 import WeekTitle from './WeekTitle.tsx';
 import ResetTable from './ResetTable.tsx';
-import { WeekContext } from '../../store/store.ts';
+import { useWeekDispatch, useWeekSelector } from '../../hooks/stateHooks.ts';
+import { selectUsers, setUsers } from '../../store/usersSlise.ts';
+import { selectDishes, setDishes } from '../../store/dishesSlise.ts';
+import { IUser } from '../../models/types.ts';
 
 export function Week() {
-  const { users, dishes, setUsers, setDishes } = useContext(WeekContext);
-
+  const { users } = useWeekSelector(selectUsers);
+  const { dishes } = useWeekSelector(selectDishes);
+  const dispatch = useWeekDispatch();
   const fetchUsersCb = useCallback(async () => UserManager.getAll(), []);
   const fetchDishesCb = useCallback(async () => DishManager.getAll(), []);
   const saveUsersCb = useCallback(async (users: User[]) => UserManager.saveAll(users), []);
@@ -21,20 +25,20 @@ export function Week() {
   useEffect(() => {
     async function fetchDishes(): Promise<void> {
       const dishes = await fetchDishesCb();
-      setDishes(dishes);
+      dispatch(setDishes({ dishes: dishes.map((dish) => dish.toObject()) }));
     }
 
     fetchDishes().then();
-  }, [fetchDishesCb, setDishes]);
+  }, [fetchDishesCb, dispatch]);
 
   useEffect(() => {
     async function fetchUsers(): Promise<void> {
       const users = await fetchUsersCb();
-      setUsers(UserManager.sort(users));
+      dispatch(setUsers({ users: UserManager.sort(users).map((user) => user.toObject()) }));
     }
 
     fetchUsers().then();
-  }, [fetchUsersCb, setUsers]);
+  }, [fetchUsersCb, dispatch]);
 
   useEffect(() => {
     if (users.length) {
@@ -42,9 +46,13 @@ export function Week() {
         await saveUsersCb(users);
       }
 
-      saveUsers(users).then();
+      saveUsers(users.map((user) => User.fromJSON(user))).then();
     }
   }, [users, saveUsersCb]);
+
+  const handleSetNewData = (users: IUser[]): void => {
+    dispatch(setUsers({ users }));
+  };
 
   return (
     <>
@@ -55,7 +63,7 @@ export function Week() {
         <ResetTable />
       </div>
       <div className="mb-2.5 min-h-96 p-8">
-        <WeekTable data={users} prices={dishes} setNewData={setUsers} />
+        <WeekTable data={users} prices={dishes} setNewData={handleSetNewData} />
       </div>
     </>
   );

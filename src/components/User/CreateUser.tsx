@@ -1,15 +1,16 @@
-import { ReactElement, useContext, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 import { UserForm } from './UserForm.tsx';
+import { createUser } from '../../store/usersSlise.ts';
 
 import Button from '../UI/Button.tsx';
 import { Modal, ModalDisplayHandle } from '../UI/Modal.tsx';
 import UserManager from '../../managers/UserManager.ts';
 import { BaseUser, CreateUser as CreateUserProps } from '../../models/types.ts';
-import { WeekContext } from '../../store/store.ts';
 import User from '../../models/User.ts';
+import { useWeekDispatch } from '../../hooks/stateHooks.ts';
 
 export function CreateUser(): ReactElement {
-  const { setUsers } = useContext(WeekContext);
+  const dispatch = useWeekDispatch();
   const modal = useRef<ModalDisplayHandle>(null);
 
   const handleClickCrate = (userData: CreateUserProps) => {
@@ -26,9 +27,7 @@ export function CreateUser(): ReactElement {
       },
     };
     UserManager.createUser(baseUser).then((newUser: User) => {
-      setUsers((users: User[]) => {
-        return [...users, newUser];
-      });
+      dispatch(createUser(newUser.toObject()));
     });
   };
 

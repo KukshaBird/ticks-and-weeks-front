@@ -1,8 +1,8 @@
 import { ReactElement } from 'react';
-import Dish from '../../models/Dish.ts';
+import { IDish } from '../../models/types.ts';
 
 interface DishProps {
-  dish: Dish;
+  dish: IDish;
 }
 
 export default function DishComponent({ dish }: DishProps): ReactElement {

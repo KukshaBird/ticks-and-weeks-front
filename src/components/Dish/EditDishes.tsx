@@ -1,20 +1,20 @@
-import { ReactElement, useContext, useRef } from 'react';
-import Dish from '../../models/Dish.ts';
+import { ReactElement, useRef } from 'react';
+import { setDishes } from '../../store/dishesSlise.ts';
 import { DishPriceForm } from './DishPriceForm.tsx';
-import { IEditDish } from '../../models/types.ts';
+import { IDish, IEditDish } from '../../models/types.ts';
 import DishManager from '../../managers/DishManager.ts';
 import { Modal, ModalDisplayHandle } from '../UI/Modal.tsx';
 import Button from '../UI/Button.tsx';
 import EditIcon from '../UI/icons/EditIcon.tsx';
-import { WeekContext } from '../../store/store.ts';
+import { useWeekDispatch } from '../../hooks/stateHooks.ts';
 
 interface EditDishesProps {
-  dishes: Dish[];
+  dishes: IDish[];
 }
 
 export default function EditDishes({ dishes }: EditDishesProps): ReactElement {
-  const { setDishes } = useContext(WeekContext);
   const modal = useRef<ModalDisplayHandle>(null);
+  const dispatch = useWeekDispatch();
 
   const handleCloseModel = () => {
     if (modal.current) {
@@ -29,12 +29,15 @@ export default function EditDishes({ dishes }: EditDishesProps): ReactElement {
   };
 
   const onSubmit = (data: IEditDish) => {
+    // TODO: Mode to actions
     DishManager.edit(data).then((dish) => {
-      setDishes((prevState) => {
-        return prevState.some((d) => d.id === dish.id)
-          ? prevState.map((d) => (d.id === dish.id ? dish : d))
-          : [...prevState, dish];
-      });
+      dispatch(
+        setDishes({
+          dishes: dishes.some((d) => d.id === dish.id)
+            ? dishes.map((d) => (d.id === dish.id ? dish.toObject() : d))
+            : [...dishes, dish.toObject()],
+        })
+      );
     });
   };
 

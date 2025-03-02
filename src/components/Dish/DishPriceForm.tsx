@@ -1,13 +1,12 @@
 import React from 'react';
-import { IEditDish } from '../../models/types.ts';
+import { IDish, IEditDish } from '../../models/types.ts';
 import Form from '../UI/Form.tsx';
-import Dish from '../../models/Dish.ts';
 import Input from '../UI/Input.tsx';
 
 interface FormProps {
   onClose: () => void;
   onSubmit: (data: IEditDish) => void;
-  data: Dish;
+  data: IDish;
 }
 
 export function DishPriceForm({ onClose, onSubmit, data }: FormProps) {

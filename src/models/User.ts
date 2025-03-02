@@ -1,6 +1,6 @@
 import { Balance, IUser, Payment } from './types.ts';
 
-class User implements IUser {
+export class User implements IUser {
   constructor(
     public id: string,
     public name: string,
@@ -28,6 +28,10 @@ class User implements IUser {
       const lunchRent = payment.lunch && lunchPrice ? lunchPrice.price : 0;
       return acc + lunchRent + breakfastRent;
     }, 0);
+  }
+
+  public toObject(): IUser {
+    return Object.assign({}, this);
   }
 }
 

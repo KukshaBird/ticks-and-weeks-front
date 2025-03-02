@@ -1,6 +1,6 @@
 import { IDish } from './types.ts';
 
-class Dish implements IDish {
+export class Dish implements IDish {
   constructor(
     public id: string,
     public name: string,
@@ -9,6 +9,10 @@ class Dish implements IDish {
 
   public static fromJSON(data: IDish): Dish {
     return new Dish(data.id, data.name, data.price);
+  }
+
+  public toObject(): IDish {
+    return Object.assign({}, this);
   }
 }
 

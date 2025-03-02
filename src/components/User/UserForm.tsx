@@ -1,13 +1,12 @@
 import Input from '../UI/Input.tsx';
 import React from 'react';
-import { CreateUser } from '../../models/types.ts';
+import { CreateUser, IUser } from '../../models/types.ts';
 import Form from '../UI/Form.tsx';
-import User from '../../models/User.ts';
 
 interface FormProps {
   onClose: () => void;
   onSubmit: (data: CreateUser) => void;
-  defaults?: User;
+  defaults?: IUser;
 }
 
 const INIT_DATA: CreateUser = {

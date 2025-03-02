@@ -1,22 +1,23 @@
-import { ReactElement, useContext, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 import { UserForm } from './UserForm.tsx';
+import { updateUser } from '../../store/usersSlise.ts';
 
 import Button from '../UI/Button.tsx';
 import EditIcon from '../UI/icons/EditIcon.tsx';
 import { Modal, ModalDisplayHandle } from '../UI/Modal.tsx';
 
-import { CreateUser as CreateUserProps, EditUser as IEditUser } from '../../models/types.ts';
+import { CreateUser as CreateUserProps, EditUser as IEditUser, IUser } from '../../models/types.ts';
 import UserManager from '../../managers/UserManager.ts';
 import User from '../../models/User.ts';
-import { WeekContext } from '../../store/store.ts';
+import { useWeekDispatch } from '../../hooks/stateHooks.ts';
 
 interface Props {
-  user: User;
+  user: IUser;
 }
 
 export function EditUser({ user }: Props): ReactElement {
-  const { setUsers } = useContext(WeekContext);
   const modal = useRef<ModalDisplayHandle>(null);
+  const dispatch = useWeekDispatch();
 
   const handleSubmit = (userData: CreateUserProps) => {
     const prepared: IEditUser = {
@@ -31,11 +32,7 @@ export function EditUser({ user }: Props): ReactElement {
     };
 
     UserManager.editUser(prepared).then((user: User) => {
-      setUsers((prevUsers) => {
-        return prevUsers.some((u) => u.id === user.id)
-          ? prevUsers.map((u) => (u.id === user.id ? user : u))
-          : [...prevUsers, user];
-      });
+      dispatch(updateUser(user.toObject()));
     });
   };
 

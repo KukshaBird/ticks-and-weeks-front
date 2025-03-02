@@ -10,18 +10,21 @@ import { getWeekDay } from './util.ts';
 import WeekTableCell from './WeekTableCell.tsx';
 import User from '../../models/User.ts';
 
-import { WeekDay } from '../../models/types.ts';
+import { IDish, IUser, WeekDay } from '../../models/types.ts';
 import { SetUserState, WeekRow } from './types.ts';
 import { fillTotals } from './utils.ts';
-import Dish from '../../models/Dish.ts';
+import { useWeekDispatch } from '../../hooks/stateHooks.ts';
+import { deleteUser } from '../../store/usersSlise.ts';
 
 interface WeekTableProps {
-  data: User[];
-  prices: Dish[];
+  data: IUser[];
+  prices: IDish[];
   setNewData: SetUserState;
 }
 
 export default function WeekTable({ data, prices, setNewData }: WeekTableProps) {
+  const dispatch = useWeekDispatch();
+  const users = data.map((user: IUser) => User.fromJSON(user));
   const handleToggle = (
     { id, dayName }: { id: string; dayName: string },
     payment: {
@@ -29,13 +32,13 @@ export default function WeekTable({ data, prices, setNewData }: WeekTableProps) 
       breakfast: boolean;
     }
   ) => {
-    const newData: User[] = [...data];
+    const newData: User[] = [...users];
 
     const weekDataIndex = newData.findIndex((user) => user.id === id);
 
     if (weekDataIndex === -1) return;
 
-    const payments = newData[weekDataIndex].payments;
+    const payments = [...newData[weekDataIndex].payments];
     const paymentIndex = payments.findIndex((day) => day.day === dayName);
 
     if (paymentIndex !== -1) {
@@ -43,16 +46,14 @@ export default function WeekTable({ data, prices, setNewData }: WeekTableProps) 
     } else {
       payments.push({ day: dayName as WeekDay, ...payment });
     }
+    newData[weekDataIndex].payments = payments;
 
-    setNewData(newData);
+    setNewData(newData.map((user) => user.toObject()));
   };
 
   const handleDeleteUser = (id: string) => {
     UserManager.deleteUser(id).then(() => {
-      setNewData((prevData) => {
-        const newData = [...prevData];
-        return newData.filter((user) => user.id !== id);
-      });
+      dispatch(deleteUser({ id }));
     });
   };
 
@@ -61,7 +62,7 @@ export default function WeekTable({ data, prices, setNewData }: WeekTableProps) 
     data.reduce((acc, user) => acc + user.balance.added, 0),
   ];
 
-  const rows: WeekRow[] = data.map((user, index) => {
+  const rows: WeekRow[] = users.map((user, index) => {
     const filledDays = DAYS.map(
       (dayName) =>
         getWeekDay(
@@ -79,7 +80,7 @@ export default function WeekTable({ data, prices, setNewData }: WeekTableProps) 
         }
     );
 
-    fillTotals(totals, filledDays, data, prices);
+    fillTotals(totals, filledDays, users, prices);
 
     const { startData, days, endData } = {
       startData: {
@@ -109,8 +110,8 @@ export default function WeekTable({ data, prices, setNewData }: WeekTableProps) 
   });
 
   totals.push(
-    data.reduce((acc, user) => acc + user.balanceSpent(prices), 0),
-    data.reduce((acc, user) => acc + user.balanceLeft(prices), 0)
+    users.reduce((acc, user) => acc + user.balanceSpent(prices), 0),
+    users.reduce((acc, user) => acc + user.balanceLeft(prices), 0)
   );
 
   return (
