@@ -4,7 +4,7 @@ import UserManager from '../../managers/UserManager.ts';
 import DishManager from '../../managers/DishManager.ts';
 import { Modal, ModalDisplayHandle } from '../UI/Modal.tsx';
 import ConfirmationWarning from '../UI/ConfirmationWarning.tsx';
-import { setUsers } from '../../store/usersSlise.ts';
+import { setUsers } from '../../store/usersSlice.ts';
 import { useWeekDispatch } from '../../hooks/stateHooks.ts';
 
 export default function ResetTable(): React.ReactElement {

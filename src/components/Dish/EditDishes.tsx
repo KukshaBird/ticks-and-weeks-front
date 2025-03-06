@@ -1,5 +1,5 @@
 import { ReactElement, useRef } from 'react';
-import { setDishes } from '../../store/dishesSlise.ts';
+import { setDishes } from '../../store/dishesSlice.ts';
 import { DishPriceForm } from './DishPriceForm.tsx';
 import { IDish, IEditDish } from '../../models/types.ts';
 import DishManager from '../../managers/DishManager.ts';

@@ -14,7 +14,7 @@ import { IDish, IUser, WeekDay } from '../../models/types.ts';
 import { SetUserState, WeekRow } from './types.ts';
 import { fillTotals } from './utils.ts';
 import { useWeekDispatch } from '../../hooks/stateHooks.ts';
-import { deleteUser } from '../../store/usersSlise.ts';
+import { deleteUser } from '../../store/usersSlice.ts';
 
 interface WeekTableProps {
   data: IUser[];

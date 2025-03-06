@@ -1,6 +1,6 @@
 import { ReactElement, useRef } from 'react';
 import { UserForm } from './UserForm.tsx';
-import { updateUser } from '../../store/usersSlise.ts';
+import { updateUser } from '../../store/usersSlice.ts';
 
 import Button from '../UI/Button.tsx';
 import EditIcon from '../UI/icons/EditIcon.tsx';

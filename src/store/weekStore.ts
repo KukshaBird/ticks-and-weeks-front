@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
-import usersReducer from './usersSlise.ts';
-import dishesReducer from './dishesSlise.ts';
+import usersReducer from './usersSlice.ts';
+import dishesReducer from './dishesSlice.ts';
 
 const weekStore = configureStore({
   reducer: {

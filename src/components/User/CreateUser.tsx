@@ -1,6 +1,6 @@
 import { ReactElement, useRef } from 'react';
 import { UserForm } from './UserForm.tsx';
-import { createUser } from '../../store/usersSlise.ts';
+import { createUser } from '../../store/usersSlice.ts';
 
 import Button from '../UI/Button.tsx';
 import { Modal, ModalDisplayHandle } from '../UI/Modal.tsx';

@@ -10,8 +10,8 @@ import DishManager from '../../managers/DishManager.ts';
 import WeekTitle from './WeekTitle.tsx';
 import ResetTable from './ResetTable.tsx';
 import { useWeekDispatch, useWeekSelector } from '../../hooks/stateHooks.ts';
-import { selectUsers, setUsers } from '../../store/usersSlise.ts';
-import { selectDishes, setDishes } from '../../store/dishesSlise.ts';
+import { selectUsers, setUsers } from '../../store/usersSlice.ts';
+import { selectDishes, setDishes } from '../../store/dishesSlice.ts';
 import { IUser } from '../../models/types.ts';
 
 export function Week() {
