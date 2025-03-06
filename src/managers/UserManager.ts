@@ -46,11 +46,6 @@ class UserManager implements IUserManager {
     return User.fromJSON(user);
   }
 
-  public sort(users: User[]): User[] {
-    const sorted = [...users];
-    return sorted.sort((a, b) => a.name.localeCompare(b.name));
-  }
-
   public async dishPerDay(): Promise<WeekDaysTotals> {
     const dishes = await this.dishManager.getAll();
     const data: {

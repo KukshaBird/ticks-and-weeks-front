@@ -38,6 +38,7 @@ export interface EditUser {
   benefit?: boolean;
   active?: boolean;
   balance?: Omit<Balance, 'now' | 'removed'>;
+  payments?: Payment[];
 }
 
 export type WeekDayTotal = {

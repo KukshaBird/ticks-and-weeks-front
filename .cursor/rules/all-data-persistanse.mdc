@@ -1,0 +1,10 @@
+---
+description: data CRUD
+globs: 
+alwaysApply: false
+---
+
+# Your rule content
+1. **CRUD Operations Responsibility**: All CRUD (Create, Read, Update, Delete) operations are the responsibility of services. This means that any functionality related to these operations should be implemented within service classes or interfaces. Refer to `types.ts` for the relevant service interfaces and their methods.
+2. Before delete any method, function or export check for usage. And if it still should be deleted then update imports properly.
+3. When you do the task, make changes only this task related. do not touch aditional parts. If you think something should be updated aditionaly - ask permission to update it.

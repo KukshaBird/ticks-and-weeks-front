@@ -3,28 +3,32 @@ import WeekTableBody from './WeekTableBody.tsx';
 import { Table } from '../UI/Table';
 import { DAYS, FULL_COLUMNS, INIT_DAY_DATA } from './constants.ts';
 import WeekTotals from './WeekTotals.tsx';
-import UserManager from '../../managers/UserManager.ts';
 import WeekTableDeleteCell from './WeekTableDeleteCell.tsx';
 import { EditUser } from '../User/EditUser.tsx';
 import { getWeekDay } from './util.ts';
 import WeekTableCell from './WeekTableCell.tsx';
 import User from '../../models/User.ts';
-
 import { IDish, IUser, WeekDay } from '../../models/types.ts';
-import { SetUserState, WeekRow } from './types.ts';
+import { WeekRow } from './types.ts';
 import { fillTotals } from './utils.ts';
-import { useWeekDispatch } from '../../hooks/stateHooks.ts';
-import { deleteUser } from '../../store/usersSlice.ts';
+import { useWeekDispatch, useWeekSelector } from '../../hooks/stateHooks.ts';
+import { updateUserAsync, deleteUserAsync } from '../../store/usersSlice.ts';
+import { selectUsers } from '../../store/usersSlice.ts';
 
 interface WeekTableProps {
   data: IUser[];
   prices: IDish[];
-  setNewData: SetUserState;
 }
 
-export default function WeekTable({ data, prices, setNewData }: WeekTableProps) {
+export default function WeekTable({ data, prices }: WeekTableProps) {
   const dispatch = useWeekDispatch();
-  const users = data.map((user: IUser) => User.fromJSON(user));
+  const { users, pendingUpdates } = useWeekSelector(selectUsers);
+  const mappedUsers = data.map((user: IUser) => 
+    pendingUpdates[user.id] 
+      ? User.fromJSON(pendingUpdates[user.id])
+      : User.fromJSON(user)
+  );
+
   const handleToggle = (
     { id, dayName }: { id: string; dayName: string },
     payment: {
@@ -32,60 +36,57 @@ export default function WeekTable({ data, prices, setNewData }: WeekTableProps) 
       breakfast: boolean;
     }
   ) => {
-    const newData: User[] = [...users];
+    const user = mappedUsers.find((u) => u.id === id);
+    if (!user) return;
 
-    const weekDataIndex = newData.findIndex((user) => user.id === id);
+    const updatedUser = User.fromJSON({
+      ...user.toObject(),
+      payments: [...user.payments]
+    });
 
-    if (weekDataIndex === -1) return;
-
-    const payments = [...newData[weekDataIndex].payments];
-    const paymentIndex = payments.findIndex((day) => day.day === dayName);
-
+    const paymentIndex = updatedUser.payments.findIndex((day) => day.day === dayName);
     if (paymentIndex !== -1) {
-      payments[paymentIndex] = { ...payments[paymentIndex], ...payment };
+      updatedUser.payments[paymentIndex] = { ...updatedUser.payments[paymentIndex], ...payment };
     } else {
-      payments.push({ day: dayName as WeekDay, ...payment });
+      updatedUser.payments.push({ day: dayName as WeekDay, ...payment });
     }
-    newData[weekDataIndex].payments = payments;
 
-    setNewData(newData.map((user) => user.toObject()));
+    dispatch(updateUserAsync(updatedUser.toObject()));
   };
 
   const handleDeleteUser = (id: string) => {
-    UserManager.deleteUser(id).then(() => {
-      dispatch(deleteUser({ id }));
-    });
+    dispatch(deleteUserAsync(id));
   };
 
   const totals: number[] = [
-    data.reduce((acc, user) => acc + user.balance.was, 0),
-    data.reduce((acc, user) => acc + user.balance.added, 0),
+    mappedUsers.reduce((acc, user) => acc + user.balance.was, 0),
+    mappedUsers.reduce((acc, user) => acc + user.balance.added, 0),
   ];
 
-  const rows: WeekRow[] = users.map((user, index) => {
+  const rows: WeekRow[] = mappedUsers.map((user, index) => {
     const filledDays = DAYS.map(
       (dayName) =>
         getWeekDay(
           dayName as WeekDay,
           user.payments.map((p) => ({
             ...p,
-            benefit: user.benefit,
+            benefit: user.benefit || false,
             active: user.active,
           }))
         ) || {
           ...INIT_DAY_DATA,
           day: dayName,
-          benefit: user.benefit,
+          benefit: user.benefit || false,
           active: user.active,
         }
     );
 
-    fillTotals(totals, filledDays, users, prices);
+    fillTotals(totals, filledDays, mappedUsers, prices);
 
     const { startData, days, endData } = {
       startData: {
         deleteButton: <WeekTableDeleteCell id={user.id} onDelete={handleDeleteUser} />,
-        edit: <EditUser user={user} />,
+        edit: <EditUser user={user.toObject()} />,
         order: index + 1,
         name: user.name,
         was: user.balance.was,
@@ -93,11 +94,9 @@ export default function WeekTable({ data, prices, setNewData }: WeekTableProps) 
       },
       days: filledDays.map((day) => (
         <WeekTableCell
+          key={`${user.id}-${day.day}`}
           data={day}
-          onClick={handleToggle.bind(null, {
-            id: user.id,
-            dayName: day.day,
-          })}
+          onClick={(payment) => handleToggle({ id: user.id, dayName: day.day }, payment)}
         />
       )),
       endData: {
@@ -110,8 +109,8 @@ export default function WeekTable({ data, prices, setNewData }: WeekTableProps) 
   });
 
   totals.push(
-    users.reduce((acc, user) => acc + user.balanceSpent(prices), 0),
-    users.reduce((acc, user) => acc + user.balanceLeft(prices), 0)
+    mappedUsers.reduce((acc, user) => acc + user.balanceSpent(prices), 0),
+    mappedUsers.reduce((acc, user) => acc + user.balanceLeft(prices), 0)
   );
 
   return (

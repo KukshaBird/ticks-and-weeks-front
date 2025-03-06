@@ -5,24 +5,30 @@ import { IUserService } from './index.ts';
 export class LocalStorageUserService implements IService<IUser>, IUserService {
   private STORAGE_KEY: string = 'users';
 
+  private sortUsers(users: IUser[]): IUser[] {
+    return [...users].sort((a, b) => a.name.localeCompare(b.name));
+  }
+
   public fetchAll(): Promise<IUser[]> {
     const fetchedUsers = localStorage.getItem(this.STORAGE_KEY);
     if (fetchedUsers != null) {
-      return JSON.parse(fetchedUsers);
+      const users = JSON.parse(fetchedUsers);
+      return Promise.resolve(this.sortUsers(users));
     } else {
       return Promise.resolve([]);
     }
   }
 
   public saveAll(data: IUser[]): Promise<void> {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.sortUsers(data)));
     return Promise.resolve();
   }
 
   public async create(data: BaseUser): Promise<IUser> {
     const fetchedUsers: IUser[] = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
     const shapedUser = this.shapeUser(data);
-    await this.saveAll([...fetchedUsers, shapedUser]);
+    const sortedUsers = this.sortUsers([...fetchedUsers, shapedUser]);
+    await this.saveAll(sortedUsers);
     return shapedUser;
   }
 
@@ -51,10 +57,12 @@ export class LocalStorageUserService implements IService<IUser>, IUserService {
               added: data.balance.added,
             }
           : oldUser.balance,
+        payments: data.payments ?? oldUser.payments,
       };
       fetchedUsers.splice(userIndex, 1, updatedUser);
 
-      await this.saveAll(fetchedUsers);
+      const sortedUsers = this.sortUsers(fetchedUsers);
+      await this.saveAll(sortedUsers);
 
       return updatedUser;
     } else {

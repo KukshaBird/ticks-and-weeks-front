@@ -1,19 +1,17 @@
 import { ReactElement, useRef } from 'react';
 import { UserForm } from './UserForm.tsx';
-import { createUser } from '../../store/usersSlice.ts';
+import { createUserAsync } from '../../store/usersSlice.ts';
 
 import Button from '../UI/Button.tsx';
 import { Modal, ModalDisplayHandle } from '../UI/Modal.tsx';
-import UserManager from '../../managers/UserManager.ts';
 import { BaseUser, CreateUser as CreateUserProps } from '../../models/types.ts';
-import User from '../../models/User.ts';
 import { useWeekDispatch } from '../../hooks/stateHooks.ts';
 
 export function CreateUser(): ReactElement {
   const dispatch = useWeekDispatch();
   const modal = useRef<ModalDisplayHandle>(null);
 
-  const handleClickCrate = (userData: CreateUserProps) => {
+  const handleClickCreate = (userData: CreateUserProps) => {
     const baseUser: BaseUser = {
       name: userData.name,
       benefit: userData.benefit,
@@ -26,16 +24,15 @@ export function CreateUser(): ReactElement {
         added: userData.addedBalance || 0,
       },
     };
-    UserManager.createUser(baseUser).then((newUser: User) => {
-      dispatch(createUser(newUser.toObject()));
-    });
+    dispatch(createUserAsync(baseUser));
+    handleCloseModal();
   };
 
   const handleSubmit = (userData: CreateUserProps) => {
-    handleClickCrate(userData);
+    handleClickCreate(userData);
   };
 
-  const handleCloseModel = () => {
+  const handleCloseModal = () => {
     if (modal.current) {
       modal.current.close();
     }
@@ -57,8 +54,8 @@ export function CreateUser(): ReactElement {
       >
         <span className="fill-teal-500">+</span>
       </Button>
-      <Modal onClose={handleCloseModel} ref={modal}>
-        <UserForm onClose={handleCloseModel} onSubmit={handleSubmit} />
+      <Modal onClose={handleCloseModal} ref={modal}>
+        <UserForm onClose={handleCloseModal} onSubmit={handleSubmit} />
       </Modal>
     </>
   );
