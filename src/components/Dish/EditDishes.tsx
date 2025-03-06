@@ -1,12 +1,11 @@
 import { ReactElement, useRef } from 'react';
-import { setDishes } from '../../store/dishesSlice.ts';
-import { DishPriceForm } from './DishPriceForm.tsx';
 import { IDish, IEditDish } from '../../models/types.ts';
-import DishManager from '../../managers/DishManager.ts';
 import { Modal, ModalDisplayHandle } from '../UI/Modal.tsx';
 import Button from '../UI/Button.tsx';
 import EditIcon from '../UI/icons/EditIcon.tsx';
 import { useWeekDispatch } from '../../hooks/stateHooks.ts';
+import { updateDishAsync } from '../../store/dishesSlice.ts';
+import { DishPriceForm } from './DishPriceForm.tsx';
 
 interface EditDishesProps {
   dishes: IDish[];
@@ -29,16 +28,8 @@ export default function EditDishes({ dishes }: EditDishesProps): ReactElement {
   };
 
   const onSubmit = (data: IEditDish) => {
-    // TODO: Mode to actions
-    DishManager.edit(data).then((dish) => {
-      dispatch(
-        setDishes({
-          dishes: dishes.some((d) => d.id === dish.id)
-            ? dishes.map((d) => (d.id === dish.id ? dish.toObject() : d))
-            : [...dishes, dish.toObject()],
-        })
-      );
-    });
+    dispatch(updateDishAsync(data));
+    handleCloseModel();
   };
 
   return (
