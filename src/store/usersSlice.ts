@@ -1,38 +1,21 @@
-import { createSlice, PayloadAction, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import { RootState } from './weekStore.ts';
-import { BaseUser, EditUser, IUser } from '../models/types.ts';
-import UserManager from '../managers/UserManager.ts';
+import { IUser } from '../models/types.ts';
+import { createUserAsync, deleteUserAsync, fetchUsers, updateUserAsync } from './thunks/userThunks.ts';
 
 interface UsersState {
   users: IUser[];
   pendingUpdates: Record<string, IUser>;
+  error: string | null;
+  isLoading: boolean;
 }
 
 const initialState: UsersState = {
   users: [],
   pendingUpdates: {},
+  error: null,
+  isLoading: false,
 };
-
-// Thunks
-export const fetchUsers = createAsyncThunk('users/fetchAll', async () => {
-  const users = await UserManager.getAll();
-  return users.map((user) => user.toObject());
-});
-
-export const createUserAsync = createAsyncThunk('users/create', async (userData: BaseUser) => {
-  const newUser = await UserManager.createUser(userData);
-  return newUser.toObject();
-});
-
-export const updateUserAsync = createAsyncThunk('users/update', async (userData: EditUser) => {
-  const updatedUser = await UserManager.editUser(userData);
-  return updatedUser.toObject();
-});
-
-export const deleteUserAsync = createAsyncThunk('users/delete', async (id: string) => {
-  await UserManager.deleteUser(id);
-  return id;
-});
 
 const userSlice = createSlice({
   name: 'users',
@@ -41,17 +24,42 @@ const userSlice = createSlice({
     setUsers: (state, action: PayloadAction<UsersState>) => {
       state.users = action.payload.users;
     },
+    clearError: (state) => {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUsers.fulfilled, (state, action: PayloadAction<IUser[]>) => {
+      // Fetch users
+      .addCase(fetchUsers.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.users = action.payload;
         state.pendingUpdates = {};
       })
-      .addCase(createUserAsync.fulfilled, (state, action: PayloadAction<IUser>) => {
+      .addCase(fetchUsers.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload?.message ?? 'Failed to fetch users';
+      })
+      // Create user
+      .addCase(createUserAsync.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(createUserAsync.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.users.push(action.payload);
       })
+      .addCase(createUserAsync.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload?.message ?? 'Failed to create user';
+      })
+      // Update user
       .addCase(updateUserAsync.pending, (state, action) => {
+        state.error = null;
         const userData = action.meta.arg;
         const userIndex = state.users.findIndex((user) => user.id === userData.id);
         if (userIndex > -1) {
@@ -72,7 +80,7 @@ const userSlice = createSlice({
           };
         }
       })
-      .addCase(updateUserAsync.fulfilled, (state, action: PayloadAction<IUser>) => {
+      .addCase(updateUserAsync.fulfilled, (state, action) => {
         const userIndex = state.users.findIndex((user) => user.id === action.payload.id);
         if (userIndex > -1) {
           state.users[userIndex] = action.payload;
@@ -80,17 +88,25 @@ const userSlice = createSlice({
         delete state.pendingUpdates[action.payload.id];
       })
       .addCase(updateUserAsync.rejected, (state, action) => {
+        state.error = action.payload?.message ?? 'Failed to update user';
         if (action.meta.arg.id) {
           delete state.pendingUpdates[action.meta.arg.id];
         }
       })
-      .addCase(deleteUserAsync.fulfilled, (state, action: PayloadAction<string>) => {
+      // Delete user
+      .addCase(deleteUserAsync.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(deleteUserAsync.fulfilled, (state, action) => {
         state.users = state.users.filter((user) => user.id !== action.payload);
+      })
+      .addCase(deleteUserAsync.rejected, (state, action) => {
+        state.error = action.payload?.message ?? 'Failed to delete user';
       });
   },
 });
 
-export const { setUsers } = userSlice.actions;
+export const { setUsers, clearError } = userSlice.actions;
 
 export const selectUsersState = (state: RootState) => state.users;
 
@@ -99,7 +115,10 @@ export const selectUsers = createSelector(
   (usersState) => ({
     users: usersState.users,
     pendingUpdates: usersState.pendingUpdates,
+    error: usersState.error,
+    isLoading: usersState.isLoading,
   })
 );
 
+export { fetchUsers, createUserAsync, updateUserAsync, deleteUserAsync };
 export default userSlice.reducer;
