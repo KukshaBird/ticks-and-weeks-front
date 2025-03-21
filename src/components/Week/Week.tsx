@@ -5,8 +5,8 @@ import DishList from '../Dish/DishList.tsx';
 import WeekTitle from './WeekTitle.tsx';
 import ResetTable from './ResetTable.tsx';
 import { useWeekDispatch, useWeekSelector } from '../../hooks/stateHooks.ts';
-import { selectUsers, fetchUsers } from '../../store/usersSlice.ts';
-import { selectDishes, fetchDishes } from '../../store/dishesSlice.ts';
+import { fetchUsers, selectUsers } from '../../store/usersSlice.ts';
+import { fetchDishes, selectDishes } from '../../store/dishesSlice.ts';
 
 export function Week() {
   const { users } = useWeekSelector(selectUsers);
@@ -29,9 +29,7 @@ export function Week() {
         <CreateUser />
         <ResetTable />
       </div>
-      <div className="mb-2.5 min-h-96 p-8">
-        <WeekTable data={users} prices={dishes} />
-      </div>
+      <div className="mb-2.5 min-h-96 p-8">{dishes.length ? <WeekTable users={users} prices={dishes} /> : null}</div>
     </>
   );
 }

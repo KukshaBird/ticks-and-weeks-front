@@ -1,4 +1,4 @@
-import User from '../../models/User.ts';
+import { IUser } from '../../models/types.ts';
 
 type Day = {
   day: string;
@@ -16,7 +16,7 @@ const findPriceOrThrow = (name: string, prices: Price[]): number => {
   return price.price;
 };
 
-export const fillTotals = (totals: number[], filledDays: Day[], users: User[], prices: Price[]): void => {
+export const fillTotals = (totals: number[], filledDays: Day[], users: IUser[], prices: Price[]): void => {
   const breakfastPrice = findPriceOrThrow('breakfast', prices);
   const lunchPrice = findPriceOrThrow('lunch', prices);
 
@@ -36,4 +36,20 @@ export const fillTotals = (totals: number[], filledDays: Day[], users: User[], p
       return acc + addSum;
     }, 0);
   }
+};
+
+export const userBalanceSpent = (user: IUser, prices: { name: string; price: number }[]): number => {
+  const lunchPrice = prices.find((price) => price.name === 'lunch');
+  const breakfastPrice = prices.find((price) => price.name === 'breakfast');
+
+  return user.payments.reduce((acc, payment) => {
+    // benefit related only for morning breakfast
+    const breakfastRent = !user.benefit && payment.breakfast && breakfastPrice ? breakfastPrice.price : 0;
+    const lunchRent = payment.lunch && lunchPrice ? lunchPrice.price : 0;
+    return acc + lunchRent + breakfastRent;
+  }, 0);
+};
+
+export const userBalanceLeft = (user: IUser, prices: Price[]): number => {
+  return user.balance.was + user.balance.added - userBalanceSpent(user, prices);
 };

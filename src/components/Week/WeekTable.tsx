@@ -7,42 +7,31 @@ import WeekTableDeleteCell from './WeekTableDeleteCell.tsx';
 import { EditUser } from '../User/EditUser.tsx';
 import { getWeekDay } from './util.ts';
 import WeekTableCell from './WeekTableCell.tsx';
-import User from '../../models/User.ts';
 import { IDish, IUser, WeekDay } from '../../models/types.ts';
 import { WeekRow } from './types.ts';
-import { fillTotals } from './utils.ts';
-import { useWeekDispatch, useWeekSelector } from '../../hooks/stateHooks.ts';
-import { updateUserAsync, deleteUserAsync } from '../../store/usersSlice.ts';
-import { selectUsers } from '../../store/usersSlice.ts';
+import { fillTotals, userBalanceLeft, userBalanceSpent } from './utils.ts';
+import { useWeekDispatch } from '../../hooks/stateHooks.ts';
+import { deleteUserAsync, updateUserAsync } from '../../store/usersSlice.ts';
 
 interface WeekTableProps {
-  data: IUser[];
+  users: IUser[];
   prices: IDish[];
 }
 
-export default function WeekTable({ data, prices }: WeekTableProps) {
+export default function WeekTable({ users, prices }: WeekTableProps) {
   const dispatch = useWeekDispatch();
-  const { users, pendingUpdates } = useWeekSelector(selectUsers);
-  const mappedUsers = data.map((user: IUser) => 
-    pendingUpdates[user.id] 
-      ? User.fromJSON(pendingUpdates[user.id])
-      : User.fromJSON(user)
-  );
 
   const handleToggle = (
     { id, dayName }: { id: string; dayName: string },
-    payment: {
-      lunch: boolean;
-      breakfast: boolean;
-    }
+    payment: { lunch: boolean; breakfast: boolean }
   ) => {
-    const user = mappedUsers.find((u) => u.id === id);
+    const user = users.find((u) => u.id === id);
     if (!user) return;
 
-    const updatedUser = User.fromJSON({
-      ...user.toObject(),
-      payments: [...user.payments]
-    });
+    const updatedUser = {
+      ...user,
+      payments: [...user.payments],
+    };
 
     const paymentIndex = updatedUser.payments.findIndex((day) => day.day === dayName);
     if (paymentIndex !== -1) {
@@ -51,7 +40,7 @@ export default function WeekTable({ data, prices }: WeekTableProps) {
       updatedUser.payments.push({ day: dayName as WeekDay, ...payment });
     }
 
-    dispatch(updateUserAsync(updatedUser.toObject()));
+    dispatch(updateUserAsync(updatedUser));
   };
 
   const handleDeleteUser = (id: string) => {
@@ -59,11 +48,11 @@ export default function WeekTable({ data, prices }: WeekTableProps) {
   };
 
   const totals: number[] = [
-    mappedUsers.reduce((acc, user) => acc + user.balance.was, 0),
-    mappedUsers.reduce((acc, user) => acc + user.balance.added, 0),
+    users.reduce((acc, user) => acc + user.balance.was, 0),
+    users.reduce((acc, user) => acc + user.balance.added, 0),
   ];
 
-  const rows: WeekRow[] = mappedUsers.map((user, index) => {
+  const rows: WeekRow[] = users.map((user, index) => {
     const filledDays = DAYS.map(
       (dayName) =>
         getWeekDay(
@@ -81,12 +70,12 @@ export default function WeekTable({ data, prices }: WeekTableProps) {
         }
     );
 
-    fillTotals(totals, filledDays, mappedUsers, prices);
+    fillTotals(totals, filledDays, users, prices);
 
     const { startData, days, endData } = {
       startData: {
         deleteButton: <WeekTableDeleteCell id={user.id} onDelete={handleDeleteUser} />,
-        edit: <EditUser user={user.toObject()} />,
+        edit: <EditUser user={user} />,
         order: index + 1,
         name: user.name,
         was: user.balance.was,
@@ -100,8 +89,8 @@ export default function WeekTable({ data, prices }: WeekTableProps) {
         />
       )),
       endData: {
-        spent: user.balanceSpent(prices),
-        left: user.balanceLeft(prices),
+        spent: userBalanceSpent(user, prices),
+        left: userBalanceLeft(user, prices),
       },
     };
 
@@ -109,8 +98,8 @@ export default function WeekTable({ data, prices }: WeekTableProps) {
   });
 
   totals.push(
-    mappedUsers.reduce((acc, user) => acc + user.balanceSpent(prices), 0),
-    mappedUsers.reduce((acc, user) => acc + user.balanceLeft(prices), 0)
+    users.reduce((acc, user) => acc + userBalanceSpent(user, prices), 0),
+    users.reduce((acc, user) => acc + userBalanceLeft(user, prices), 0)
   );
 
   return (
