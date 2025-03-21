@@ -11,32 +11,32 @@ export interface IDishManager {
 }
 
 class DishManager implements IDishManager {
-  constructor(private userService: IDishService) {}
+  constructor(private dishService: IDishService) {}
 
   public findDish(name: string, dishes: Dish[]): Dish | undefined {
     return dishes.find((dish) => dish.name === name);
   }
 
   public async getAll(): Promise<Dish[]> {
-    const dishesData = await this.userService.fetchAll();
+    const dishesData = await this.dishService.fetchAll();
     return this.createModels(dishesData);
   }
 
   public async saveAll(dishes: Dish[]): Promise<void> {
-    return this.userService.saveAll(dishes);
+    return this.dishService.saveAll(dishes);
   }
 
   public async create(userData: BaseDish): Promise<Dish> {
-    const newDish = await this.userService.create(userData);
+    const newDish = await this.dishService.create(userData);
     return this.createModel(newDish);
   }
 
   public async delete(dishId: string): Promise<void> {
-    return await this.userService.delete(dishId);
+    return await this.dishService.delete(dishId);
   }
 
   public async edit(data: IEditDish): Promise<Dish> {
-    const updated = await this.userService.edit(data);
+    const updated = await this.dishService.edit(data);
     return this.createModel(updated);
   }
 
@@ -49,7 +49,7 @@ class DishManager implements IDishManager {
   }
 
   public async purge(): Promise<void> {
-    await this.userService.purge();
+    await this.dishService.purge();
   }
 }
 
