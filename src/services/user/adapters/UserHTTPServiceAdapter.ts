@@ -71,6 +71,9 @@ export class UserHTTPServiceAdaptor implements IUserService {
   }
 
   private handleOrders(payments: IUser['payments']): APIUser['orders'] {
+    if (!payments) {
+      return [];
+    }
     return payments.flatMap(({ day, breakfast, lunch }) => {
       const orders = [];
       if (breakfast) {
