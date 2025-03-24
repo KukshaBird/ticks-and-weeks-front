@@ -1,8 +1,8 @@
-import { IService } from '../types.ts';
+import { IClient } from '../types.ts';
 import { BaseUser, EditUser, IUser } from '../../models/types.ts';
 import { IUserService } from './index.ts';
 
-export class LocalStorageUserService implements IService<IUser>, IUserService {
+export class LocalStorageUserService implements IClient<IUser>, IUserService {
   private STORAGE_KEY: string = 'users';
 
   private sortUsers(users: IUser[]): IUser[] {

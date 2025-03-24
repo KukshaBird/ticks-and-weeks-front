@@ -1,15 +1,19 @@
-import { CRUDService, MayPurgeAll } from '../types.ts';
 import { BaseUser, EditUser, IUser } from '../../models/types.ts';
-import { LocalStorageUserService } from './LocalStorageService.ts';
 import { BaseService } from '../BaseService.ts';
+import { UserHTTPServiceAdaptor } from './adapters/UserHTTPServiceAdapter.ts';
+import { CRUDClient, MayPurgeAll } from '../types.ts';
 
-export type IUserService = CRUDService<BaseUser, IUser, EditUser> & MayPurgeAll;
+export type IUserService = CRUDClient<BaseUser, IUser, EditUser> & MayPurgeAll;
 
-class UserService extends BaseService<IUser, EditUser, BaseUser> {
-  protected service: IUserService = new LocalStorageUserService();
+class UserService extends BaseService<IUser, EditUser, BaseUser> implements IUserService {
+  protected client = new UserHTTPServiceAdaptor();
+
+  async fetchAll(): Promise<IUser[]> {
+    return super.fetchAll();
+  }
 
   public async purge(): Promise<void> {
-    await this.service.purge();
+    await this.client.purge();
   }
 }
 

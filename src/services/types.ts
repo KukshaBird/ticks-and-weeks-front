@@ -1,28 +1,28 @@
-export interface IService<T> {
+export interface IClient<T> {
   fetchAll(): Promise<T[]>;
 
   saveAll(data: T[]): Promise<void>;
 }
 
-export interface CRUDService<Create, Retrieve, Update>
-  extends IService<Retrieve>,
-    MayCreateService<Create, Retrieve>,
-    MayDeleteService,
-    MayEditService<Update, Retrieve> {}
+export interface CRUDClient<Create, Retrieve, Update>
+  extends IClient<Retrieve>,
+    MayCreate<Create, Retrieve>,
+    MayDelete,
+    MayEdit<Update, Retrieve> {}
 
-export interface MayReadService<T> {
+export interface MayRead<T> {
   fetchAll(): Promise<T[]>;
 }
 
-export interface MayCreateService<CreateData, ReturnType> {
+export interface MayCreate<CreateData, ReturnType> {
   create(data: CreateData): Promise<ReturnType>;
 }
 
-export interface MayDeleteService<ReturnType = void> {
+export interface MayDelete<ReturnType = void> {
   delete(id: string): Promise<ReturnType>;
 }
 
-export interface MayEditService<EditType, ReturnType> {
+export interface MayEdit<EditType, ReturnType> {
   edit(data: EditType): Promise<ReturnType>;
 }
 
