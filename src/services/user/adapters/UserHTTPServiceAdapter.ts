@@ -5,8 +5,9 @@ import { RESTClient } from '../../../client/RESTClient.ts';
 import { IUserService } from '../index.ts';
 
 /**
- * UserHTTPServiceAdaptor is a decorator method. Its purpose is transform User data
- * between the internal format and the API format in both directions.
+ * UserHTTPServiceAdaptor acts as an adapter between the internal user data format
+ * and the API format. It handles transformations in both directions and
+ * communicates with the HTTP client to perform CRUD operations.
  */
 export class UserHTTPServiceAdaptor implements IUserService {
   private client = new HTTPUserClient(new RESTClient(PUPILS_URL));
