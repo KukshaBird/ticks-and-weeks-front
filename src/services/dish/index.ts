@@ -1,16 +1,17 @@
-import LocalStorageDishService from './LocalStorageService.ts';
-
 import { BaseDish, IDish, IEditDish } from '../../models/types.ts';
-import { CRUDService, MayPurgeAll } from './../types.ts';
+import { CRUDClient, MayPurgeAll } from './../types.ts';
 import { BaseService } from '../BaseService.ts';
+import { DISH_URL } from '../constants.ts';
+import HTTPDishClient from './HTTPDishClient.ts';
+import { RESTClient } from '../../client/RESTClient.ts';
 
-export type IDishService = CRUDService<BaseDish, IDish, IEditDish> & MayPurgeAll;
+export type IDishService = CRUDClient<BaseDish, IDish, IEditDish> & MayPurgeAll;
 
 export class DishService extends BaseService<IDish, IEditDish, BaseDish> {
-  protected service: IDishService = new LocalStorageDishService();
+  protected client: IDishService = new HTTPDishClient(new RESTClient(DISH_URL));
 
   public async purge(): Promise<void> {
-    await this.service.purge();
+    await this.client.purge();
   }
 }
 
