@@ -27,7 +27,14 @@ export default function ResetTable(): React.ReactElement {
     const purgeWeekData = async (): Promise<void> => {
       await UserManager.purge();
       await DishManager.purge();
-      dispatch(setUsers({ users: [] }));
+      dispatch(
+        setUsers({
+          users: [],
+          pendingUpdates: {},
+          error: null,
+          isLoading: false,
+        })
+      );
     };
     purgeWeekData().then();
   };
