@@ -52,7 +52,8 @@ class HTTPUserClient {
   }
 
   public async purge(): Promise<void> {
-    return this.client.madeRequest<void>('/purge', { method: 'GET' });
+    // TODO: implement on back-end;
+    return this.client.madeRequest<void>('/purge', { method: 'POST' });
   }
 }
 
