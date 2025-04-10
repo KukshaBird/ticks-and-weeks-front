@@ -77,7 +77,7 @@ export default function WeekTable({ users, prices }: WeekTableProps) {
         deleteButton: <WeekTableDeleteCell id={user.id} onDelete={handleDeleteUser} />,
         edit: <EditUser user={user} />,
         order: index + 1,
-        name: user.name,
+        name: <td>{user.name}</td>,
         was: user.balance.was,
         added: user.balance.added,
       },
