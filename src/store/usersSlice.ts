@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './weekStore.ts';
 import { IUser } from '../models/types.ts';
 import { createUserAsync, deleteUserAsync, fetchUsers, updateUserAsync } from './thunks/userThunks.ts';
@@ -69,7 +69,7 @@ const userSlice = createSlice({
             name: userData.name ?? currentUser.name,
             benefit: userData.benefit ?? currentUser.benefit,
             active: userData.active ?? currentUser.active,
-            balance: userData.balance 
+            balance: userData.balance
               ? {
                   ...currentUser.balance,
                   was: userData.balance.was,
@@ -110,15 +110,12 @@ export const { setUsers, clearError } = userSlice.actions;
 
 export const selectUsersState = (state: RootState) => state.users;
 
-export const selectUsers = createSelector(
-  selectUsersState,
-  (usersState) => ({
-    users: usersState.users,
-    pendingUpdates: usersState.pendingUpdates,
-    error: usersState.error,
-    isLoading: usersState.isLoading,
-  })
-);
+export const selectUsers = createSelector(selectUsersState, (usersState) => ({
+  users: usersState.users,
+  pendingUpdates: usersState.pendingUpdates,
+  error: usersState.error,
+  isLoading: usersState.isLoading,
+}));
 
 export { fetchUsers, createUserAsync, updateUserAsync, deleteUserAsync };
 export default userSlice.reducer;
