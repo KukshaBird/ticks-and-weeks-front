@@ -10,6 +10,7 @@ interface FormProps {
 }
 
 export function DishPriceForm({ onClose, onSubmit, data }: FormProps) {
+  // TODO: Fix send same price
   const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
 
