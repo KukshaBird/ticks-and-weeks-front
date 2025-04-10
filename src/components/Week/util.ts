@@ -9,6 +9,6 @@ interface Day {
 }
 
 export const getWeekDay = (dayName: WeekDay, days: Day[]): Day | null => {
-  const dayIndex = days.findIndex((day) => day.day === dayName);
+  const dayIndex = days.findIndex((day) => day.day.toLowerCase() === dayName.toLowerCase());
   return dayIndex === -1 ? null : days[dayIndex];
 };
