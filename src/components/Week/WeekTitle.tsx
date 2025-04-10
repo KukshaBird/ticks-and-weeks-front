@@ -51,7 +51,7 @@ export default function WeekTitle() {
       <Modal onClose={handleClose} ref={modal}>
         <div ref={tableRef}>
           <ul className="space-y-4 p-4 bg-gray-100 rounded-lg shadow-md">
-            {Object.entries<WeekDayTotal>(totals).map(([dayName, data]) => {
+            {Object.entries<WeekDayTotal>(totals).map(([dayName, data], index) => {
               return (
                 <li key={'wdt-' + dayName} className="p-4 bg-white rounded-md shadow-sm">
                   <h3 className="text-lg font-semibold text-blue-600">{dayName}</h3>
@@ -65,7 +65,7 @@ export default function WeekTitle() {
                     <p className="text-gray-700 font-medium">Children:</p>
                     <ol className="pl-4 mt-2 space-y-1 list-disc list-inside">
                       {data.users.map((userName) => (
-                        <li key={`${dayName}-${userName}`} className="text-gray-600">
+                        <li key={`${dayName}-${userName}-${index}`} className="text-gray-600">
                           {userName}
                         </li>
                       ))}
