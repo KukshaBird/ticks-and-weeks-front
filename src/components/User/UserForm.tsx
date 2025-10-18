@@ -39,8 +39,8 @@ export function UserForm({ onClose, onSubmit, defaults }: FormProps) {
     onSubmit({
       name: fsData.name || '',
       benefit: fsData.benefit === 'on',
-      startBalance: Number.parseInt(fsData.startBalance) || undefined,
-      addedBalance: Number.parseInt(fsData.addedBalance) || undefined,
+      startBalance: Number.parseInt(fsData.startBalance) ?? undefined,
+      addedBalance: Number.parseInt(fsData.addedBalance) ?? undefined,
     });
 
     event.currentTarget.reset();
